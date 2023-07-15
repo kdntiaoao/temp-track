@@ -1,3 +1,4 @@
+import { CustomQueryProvider } from './_components/CustomQueryProvider'
 import './globals.css'
 import './theme.css'
 import type { Metadata } from 'next'
@@ -13,7 +14,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <CustomQueryProvider>{children}</CustomQueryProvider>
+      </body>
     </html>
   )
 }
