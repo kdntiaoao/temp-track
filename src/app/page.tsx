@@ -12,7 +12,7 @@ export default function Home() {
           <LinkText href="/sample">Sample</LinkText>
         </li>
         <li>
-          <LinkText href="/sample2">Sample 2</LinkText>
+          <LinkText href="/image-sample">Image Sample</LinkText>
         </li>
       </ul>
     </Container>
