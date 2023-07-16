@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import { Zen_Kaku_Gothic_New } from 'next/font/google'
-import { CustomQueryProvider } from './_components/CustomQueryProvider'
+import { Noto_Sans_JP } from 'next/font/google'
 import './globals.css'
 import './theme.css'
+import { CustomProvider } from './_components/provider/CustomProvider'
 
-const zenKakuGothicNew = Zen_Kaku_Gothic_New({ weight: ['400'], subsets: ['latin'] })
+const notoSansJP = Noto_Sans_JP({ weight: ['400'], subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: '体温管理アプリ',
@@ -14,8 +14,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
-      <body className={zenKakuGothicNew.className}>
-        <CustomQueryProvider>{children}</CustomQueryProvider>
+      <body className={notoSansJP.className}>
+        <CustomProvider>{children}</CustomProvider>
       </body>
     </html>
   )
