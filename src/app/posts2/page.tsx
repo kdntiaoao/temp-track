@@ -1,6 +1,5 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
 import { Heading } from '../_components/Heading'
 import { Container } from '../_components/Container'
 import { LinkText } from '../_components/LinkText'
