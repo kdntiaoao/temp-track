@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { buttonGroupStyle, tableStyle, tableWrapStyle, tdRowStyle, tdStyle, thRowStyle, thStyle } from './Table.css'
 import dayjs from 'dayjs'
 import { Button } from '../Button'
@@ -11,6 +11,10 @@ export const Table = () => {
   const [isScrollable, setIsScrollable] = useState(false)
   const tableRef = useRef<HTMLTableElement>(null)
   const { bodyTempList, deleteBodyTemp } = useBodyTemp()
+
+  const sortedBodyTempList = useMemo(() => {
+    return structuredClone(bodyTempList)?.sort((a, b) => a.time - b.time) || []
+  }, [bodyTempList])
 
   const handleScroll = (ev: React.UIEvent<HTMLTableElement, UIEvent>) => {
     const target = ev.target as HTMLTableElement
@@ -46,7 +50,7 @@ export const Table = () => {
           </tr>
         </thead>
         <tbody>
-          {bodyTempList.map((bodyTemp, i) => (
+          {sortedBodyTempList.map((bodyTemp, i) => (
             <tr key={i} className={tdRowStyle}>
               <td className={tdStyle}>{dayjs(bodyTemp.time).format('YYYY年MM月DD日')}</td>
               <td className={tdStyle}>{bodyTemp.bodyTemp}</td>

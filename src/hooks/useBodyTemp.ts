@@ -12,10 +12,10 @@ export const useBodyTemp = () => {
   const [bodyTempList, setBodyTempList] = useRecoilState(bodyTempListState)
   const [isLoading, setIsLoading] = useState(true)
 
-  const registerBodyTemp = (bodyTemp: string) => {
-    const time = Date.now()
+  const registerBodyTemp = (time: number, bodyTemp: string) => {
+    const now = Date.now()
     const data = {
-      id: 'bodyTemp:' + time,
+      id: 'bodyTemp:' + now,
       time,
       bodyTemp,
     }
