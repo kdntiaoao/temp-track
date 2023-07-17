@@ -6,9 +6,12 @@ import dayjs from 'dayjs'
 import { Button } from '../Button'
 import { vars } from '@/app/theme.css'
 import { useBodyTemp } from '@/hooks/useBodyTemp'
+import { EditModal } from '../EditModal'
 
 export const Table = () => {
   const [isScrollable, setIsScrollable] = useState(false)
+  const [edittedId, setEdittedId] = useState<string>()
+  const [isOpenModal, setIsOpenModal] = useState(false)
   const tableRef = useRef<HTMLTableElement>(null)
   const { bodyTempList, deleteBodyTemp } = useBodyTemp()
 
@@ -23,8 +26,9 @@ export const Table = () => {
     }
   }
 
-  const handleClickEdit = () => {
-    alert('Click Edit Button!!')
+  const handleClickEdit = (id: string) => {
+    setEdittedId(id)
+    setIsOpenModal(true)
   }
 
   const handleClickDel = (id: string) => {
@@ -41,31 +45,35 @@ export const Table = () => {
   }
 
   return (
-    <div className={`${tableWrapStyle} ${isScrollable && 'scrollable'}`}>
-      <table ref={tableRef} className={tableStyle} onScroll={handleScroll}>
-        <thead>
-          <tr className={thRowStyle}>
-            <th className={thStyle}>日付</th>
-            <th className={thStyle}>体温</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedBodyTempList.map((bodyTemp, i) => (
-            <tr key={i} className={tdRowStyle}>
-              <td className={tdStyle}>{dayjs(bodyTemp.time).format('YYYY年MM月DD日')}</td>
-              <td className={tdStyle}>{bodyTemp.bodyTemp}</td>
-              <td className={tdStyle}>
-                <span className={buttonGroupStyle}>
-                  <Button onClick={handleClickEdit}>編集</Button>
-                  <Button color={vars.color.error['60']} onClick={() => handleClickDel(bodyTemp.id)}>
-                    削除
-                  </Button>
-                </span>
-              </td>
+    <>
+      <div className={`${tableWrapStyle} ${isScrollable && 'scrollable'}`}>
+        <table ref={tableRef} className={tableStyle} onScroll={handleScroll}>
+          <thead>
+            <tr className={thRowStyle}>
+              <th className={thStyle}>日付</th>
+              <th className={thStyle}>体温</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {sortedBodyTempList.map((bodyTemp, i) => (
+              <tr key={i} className={tdRowStyle}>
+                <td className={tdStyle}>{dayjs(bodyTemp.time).format('YYYY年MM月DD日')}</td>
+                <td className={tdStyle}>{bodyTemp.bodyTemp}</td>
+                <td className={tdStyle}>
+                  <span className={buttonGroupStyle}>
+                    <Button onClick={() => handleClickEdit(bodyTemp.id)}>編集</Button>
+                    <Button color={vars.color.error['60']} onClick={() => handleClickDel(bodyTemp.id)}>
+                      削除
+                    </Button>
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {isOpenModal && edittedId && <EditModal edittedId={edittedId} onClose={() => setIsOpenModal(false)} />}
+    </>
   )
 }

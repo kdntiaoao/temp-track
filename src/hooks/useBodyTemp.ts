@@ -24,6 +24,16 @@ export const useBodyTemp = () => {
     setBodyTempList(result)
   }
 
+  const editBodyTemp = (id: string, time: number, bodyTemp: string) => {
+    const clone = structuredClone(bodyTempList)
+    const edittedIndex = bodyTempList?.findIndex((item) => item.id === id)
+    if (clone && edittedIndex !== undefined) {
+      clone[edittedIndex] = { id, time, bodyTemp }
+    }
+    window.localStorage.setItem('bodyTempList', JSON.stringify(clone))
+    setBodyTempList(clone)
+  }
+
   const deleteBodyTemp = (id: string) => {
     const result = bodyTempList?.filter((bodyTemp) => bodyTemp.id !== id) || []
     window.localStorage.setItem('bodyTempList', JSON.stringify(result))
@@ -43,5 +53,5 @@ export const useBodyTemp = () => {
     }
   }, [bodyTempList])
 
-  return { bodyTempList, isLoading, registerBodyTemp, deleteBodyTemp }
+  return { bodyTempList, isLoading, registerBodyTemp, deleteBodyTemp, editBodyTemp }
 }

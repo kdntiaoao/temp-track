@@ -47,5 +47,6 @@ export const itemStyle = style({
 export const dragAreaStyle = style({
   position: 'fixed',
   inset: 0,
-  backgroundColor: 'rgb(0, 0, 0, 0.2)',
+  zIndex: 999,
+  backgroundColor: 'rgb(0, 0, 255, 0.2)',
 })

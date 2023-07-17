@@ -10,16 +10,18 @@ export default function Home() {
   const { isLoading } = useBodyTemp()
 
   return (
-    <Container>
-      <Heading>体温管理アプリ</Heading>
+    <>
+      <Container>
+        <Heading>体温管理アプリ</Heading>
 
-      {isLoading ? <p>Loading...</p> : <Table />}
+        {isLoading ? <p>Loading...</p> : <Table />}
 
-      <ul className="my-4">
-        <li>
-          <LinkText href="/register">体温を記録する</LinkText>
-        </li>
-      </ul>
-    </Container>
+        <ul className="my-4">
+          <li>
+            <LinkText href="/register">体温を記録する</LinkText>
+          </li>
+        </ul>
+      </Container>
+    </>
   )
 }

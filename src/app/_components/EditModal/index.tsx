@@ -1,22 +1,20 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { Button } from '@/app/_components/Button'
-import { Container } from '@/app/_components/Container'
-import { Heading } from '@/app/_components/Heading'
-import { LinkText } from '@/app/_components/LinkText'
-import { useBodyTemp } from '@/hooks/useBodyTemp'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { modalStyle, wrapStyle } from './styles.css'
+import { CustomSelect } from '../CustomSelect'
 import dayjs from 'dayjs'
-import { CustomSelect } from '../_components/CustomSelect'
+import { Button } from '../Button'
+import { useBodyTemp } from '@/hooks/useBodyTemp'
+
+type Props = { edittedId: string; onClose: () => void }
 
 const monthList = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
 const integerList = ['34', '35', '36', '37', '38', '39', '40', '41', '42']
 const decimalList = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
-export default function Page() {
-  const router = useRouter()
-  const { registerBodyTemp } = useBodyTemp()
+export const EditModal = ({ edittedId, onClose }: Props) => {
+  const { bodyTempList, editBodyTemp } = useBodyTemp()
   const [yearList, setYearList] = useState<string[]>([])
   const [dayList, setDayList] = useState<string[]>([])
   const [yearVal, setYearVal] = useState<string>()
@@ -37,11 +35,11 @@ export default function Page() {
     setDayVal(val)
   }
 
-  const handleChangeInteger = (ev: ChangeEvent<HTMLSelectElement>) => {
+  const handleChangeInteger = (ev: React.ChangeEvent<HTMLSelectElement>) => {
     setIntegerVal(ev.target.value)
   }
 
-  const handleChangeDecimal = (ev: ChangeEvent<HTMLSelectElement>) => {
+  const handleChangeDecimal = (ev: React.ChangeEvent<HTMLSelectElement>) => {
     setDecimalVal(ev.target.value)
   }
 
@@ -56,15 +54,22 @@ export default function Page() {
       .millisecond(0)
       .valueOf()
     console.log({ yearVal, monthVal, dayVal })
-    registerBodyTemp(time, integerVal + '.' + decimalVal)
-    router.push('/')
+    editBodyTemp(edittedId, time, integerVal + '.' + decimalVal)
+
+    onClose()
   }
 
   useEffect(() => {
+    const editted = bodyTempList?.find((b) => b.id === edittedId)
+    if (editted?.time) {
+      setYearVal(dayjs(editted.time).year().toString())
+      setMonthVal((dayjs(editted.time).month() + 1).toString())
+      setDayVal(dayjs(editted.time).date().toString())
+    }
+  }, [bodyTempList, edittedId])
+
+  useEffect(() => {
     const now = dayjs()
-    const year = now.year()
-    const month = now.month()
-    const day = now.date()
 
     const DISPLAYED_YEAR_LENGTH = 500
     const yearList = Array(DISPLAYED_YEAR_LENGTH)
@@ -75,9 +80,6 @@ export default function Page() {
       })
 
     setYearList(yearList)
-    setYearVal(year.toString())
-    setMonthVal((month + 1).toString())
-    setDayVal(day.toString())
   }, [])
 
   useEffect(() => {
@@ -93,15 +95,9 @@ export default function Page() {
   }, [monthVal, yearVal])
 
   return (
-    <Container>
-      <Heading>体温を記録する</Heading>
-
-      <div className="my-4">
-        <LinkText href="/">HOME</LinkText>
-      </div>
-
-      <div className="my-4">
-        <div className="my-8 flex gap-4">
+    <div className={wrapStyle}>
+      <div className={modalStyle}>
+        <div className="flex gap-4">
           {yearVal && monthVal && dayVal && (
             <>
               <CustomSelect list={yearList} selectedVal={yearVal} onChange={handleChangeYear} />
@@ -131,6 +127,6 @@ export default function Page() {
 
         <Button onClick={handleSave}>記録する</Button>
       </div>
-    </Container>
+    </div>
   )
 }
