@@ -1,16 +1,16 @@
 'use state'
 
 import { assignInlineVars } from '@vanilla-extract/dynamic'
-import { itemStyle, listStyle, opacityVar, rotateXVar, wrapStyle } from './CustomSelect.css'
-import { useEffect, useState } from 'react'
+import { dragAreaStyle, itemStyle, listStyle, opacityVar, rotateXVar, wrapStyle } from './CustomSelect.css'
+import { useEffect, useMemo, useState } from 'react'
 
 type Props = {
-  list: (string | number)[]
-  selectedVal: string | number
-  onChange: (val: string | number) => void
+  list: string[]
+  selectedVal: string
+  onChange: (val: string) => void
 }
 
-const DEGREE_DISTANCE = 10
+const DEGREE_DISTANCE = 30
 let requestId = 0
 
 export const CustomSelect = ({ list, selectedVal, onChange }: Props) => {
@@ -18,16 +18,24 @@ export const CustomSelect = ({ list, selectedVal, onChange }: Props) => {
   const [startingY, setStartingY] = useState(0)
   const [difference, setDifference] = useState(0)
   const [speed, setSpeed] = useState(0)
+  const [isDisplayedDragArea, setIsDisplayedDragArea] = useState(false)
+
+  // ちょうどよいdifference
+  const stopingDifferenceList = useMemo(() => {
+    return list.map((item, i) => ({ value: item, difference: -i * DEGREE_DISTANCE }))
+  }, [list])
 
   const handlePointerDown = (ev: React.MouseEvent<HTMLElement>) => {
     window.cancelAnimationFrame(requestId)
     setIsPointerDown(true)
     setStartingY(ev.clientY)
     setSpeed(0)
+    setIsDisplayedDragArea(true)
   }
 
   const stopScroll = (ev: React.MouseEvent<HTMLElement>) => {
     setIsPointerDown(false)
+    setIsDisplayedDragArea(false)
     animateStopScroll()
   }
 
@@ -68,17 +76,11 @@ export const CustomSelect = ({ list, selectedVal, onChange }: Props) => {
     if (absDegree > 90) {
       return '0'
     }
-    return '1'
+    return ((90 - absDegree) / 90).toString()
   }
 
   const getNear = (difference: number) => {
-    // ちょうどよいdifference
-    const checkingDifferenceList = Array(list.length)
-      .fill(0)
-      .map((_, i) => -i * DEGREE_DISTANCE)
-    return checkingDifferenceList.find((checkingDifference) => {
-      return Math.abs(checkingDifference - difference) < DEGREE_DISTANCE * 0.5
-    })
+    return stopingDifferenceList.find((item) => Math.abs(item.difference - difference) < DEGREE_DISTANCE * 0.5)
   }
 
   useEffect(() => {
@@ -95,36 +97,56 @@ export const CustomSelect = ({ list, selectedVal, onChange }: Props) => {
       const near = getNear(result)
       if (!isPointerDown && speed < 0.01 && near !== undefined) {
         setSpeed(0)
-        return near
+        return near.difference
       }
       return result
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [list.length, speed])
 
+  useEffect(() => {
+    if (speed === 0) {
+      const selected = stopingDifferenceList.find((item) => item.difference === difference)
+      console.log(selected?.value)
+      if (selected !== undefined) {
+        onChange(selected.value)
+      }
+    }
+  }, [difference, onChange, speed, stopingDifferenceList])
+
+  useEffect(() => {
+    const selectedIndex = list.indexOf(selectedVal)
+    setDifference(-selectedIndex * DEGREE_DISTANCE)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [list])
+
   return (
-    <div
-      className={wrapStyle}
-      onPointerDown={handlePointerDown}
-      onMouseDown={handlePointerDown}
-      onPointerUp={stopScroll}
-      onMouseUp={stopScroll}
-      onPointerLeave={stopScroll}
-      onMouseLeave={stopScroll}
-      onPointerMove={handlePointerMove}
-      onMouseMove={handlePointerMove}
-    >
-      <div className={listStyle}>
-        {list.map((item, index) => (
-          <div
-            key={item}
-            className={itemStyle}
-            style={assignInlineVars({ [rotateXVar]: getRoteX(index), [opacityVar]: getOpacity(index) })}
-          >
-            {item}
-          </div>
-        ))}
+    <>
+      <div className={wrapStyle} onPointerDown={handlePointerDown} onMouseDown={handlePointerDown}>
+        <div className={listStyle}>
+          {list.map((item, index) => (
+            <div
+              key={item}
+              className={itemStyle}
+              style={assignInlineVars({ [rotateXVar]: getRoteX(index), [opacityVar]: getOpacity(index) })}
+            >
+              {item}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+
+      {isDisplayedDragArea && (
+        <div
+          className={dragAreaStyle}
+          onPointerUp={stopScroll}
+          onMouseUp={stopScroll}
+          onPointerLeave={stopScroll}
+          onMouseLeave={stopScroll}
+          onPointerMove={handlePointerMove}
+          onMouseMove={handlePointerMove}
+        ></div>
+      )}
+    </>
   )
 }

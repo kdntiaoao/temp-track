@@ -10,35 +10,43 @@ import { ChangeEvent, useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import { CustomSelect } from '../_components/CustomSelect'
 
-const monthList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+const monthList = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
 const integerList = ['34', '35', '36', '37', '38', '39', '40', '41', '42']
 const decimalList = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 export default function Page() {
   const router = useRouter()
   const { registerBodyTemp } = useBodyTemp()
-  const [yearList, setYearList] = useState<number[]>([])
-  const [dayList, setDayList] = useState<number[]>([])
-  const [yearVal, setYearVal] = useState(2020)
-  const [monthVal, setMonthVal] = useState(0)
-  const [dayVal, setDayVal] = useState(1)
+  const [yearList, setYearList] = useState<string[]>([])
+  const [dayList, setDayList] = useState<string[]>([])
+  const [yearVal, setYearVal] = useState<string>()
+  const [monthVal, setMonthVal] = useState<string>()
+  const [dayVal, setDayVal] = useState<string>()
   const [integerVal, setIntegerVal] = useState('36')
   const [decimalVal, setDecimalVal] = useState('0')
 
   const handleChangeYear = (ev: ChangeEvent<HTMLSelectElement>) => {
-    setYearVal(Number(ev.target.value))
+    setYearVal(ev.target.value)
   }
 
-  const handleChangeYear2 = (val: string | number) => {
-    setYearVal(Number(val))
+  const handleChangeYear2 = (val: string) => {
+    setYearVal(val)
   }
 
   const handleChangeMonth = (ev: ChangeEvent<HTMLSelectElement>) => {
-    setMonthVal(Number(ev.target.value))
+    setMonthVal(ev.target.value)
+  }
+
+  const handleChangeMonth2 = (val: string) => {
+    setMonthVal(val)
   }
 
   const handleChangeDay = (ev: ChangeEvent<HTMLSelectElement>) => {
-    setDayVal(Number(ev.target.value))
+    setDayVal(ev.target.value)
+  }
+
+  const handleChangeDay2 = (val: string) => {
+    setDayVal(val)
   }
 
   const handleChangeInteger = (ev: ChangeEvent<HTMLSelectElement>) => {
@@ -50,7 +58,16 @@ export default function Page() {
   }
 
   const handleSave = () => {
-    const time = dayjs().year(yearVal).month(monthVal).date(dayVal).hour(0).minute(0).second(0).millisecond(0).valueOf()
+    const time = dayjs()
+      .year(Number(yearVal))
+      .month(Number(monthVal) - 1)
+      .date(Number(dayVal))
+      .hour(0)
+      .minute(0)
+      .second(0)
+      .millisecond(0)
+      .valueOf()
+    console.log({ yearVal, monthVal, dayVal })
     registerBodyTemp(time, integerVal + '.' + decimalVal)
     router.push('/')
   }
@@ -64,22 +81,28 @@ export default function Page() {
     const DISPLAYED_YEAR_LENGTH = 500
     const yearList = Array(DISPLAYED_YEAR_LENGTH)
       .fill(now.year())
-      .map((base, i) => {
+      .map((base: number, i) => {
         const baseIndex = (DISPLAYED_YEAR_LENGTH / 2) | 0
-        return base + (i - baseIndex)
+        return (base + (i - baseIndex)).toString()
       })
 
+    console.log({ year, month, day })
+
     setYearList(yearList)
-    setYearVal(year)
-    setMonthVal(month)
-    setDayVal(day)
+    setYearVal(year.toString())
+    setMonthVal((month + 1).toString())
+    setDayVal(day.toString())
   }, [])
 
   useEffect(() => {
-    const daysInMonth = dayjs().year(yearVal).month(monthVal).daysInMonth()
+    if (!yearVal || !monthVal) return
+    const daysInMonth = dayjs()
+      .year(Number(yearVal))
+      .month(Number(monthVal) - 1)
+      .daysInMonth()
     const dayList = Array(daysInMonth)
       .fill(0)
-      .map((_, i) => i + 1)
+      .map((_, i) => (i + 1).toString())
     setDayList(dayList)
   }, [monthVal, yearVal])
 
@@ -92,28 +115,17 @@ export default function Page() {
       </div>
 
       <div className="my-4">
+        <div className="my-8 flex gap-4">
+          {yearVal && monthVal && dayVal && (
+            <>
+              <CustomSelect list={yearList} selectedVal={yearVal} onChange={handleChangeYear2} />
+              <CustomSelect list={monthList} selectedVal={monthVal} onChange={handleChangeMonth2} />
+              <CustomSelect list={dayList} selectedVal={dayVal} onChange={handleChangeDay2} />
+            </>
+          )}
+        </div>
+
         <div className="my-8 text-xl">
-          <select value={yearVal} onChange={handleChangeYear}>
-            {yearList.map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
-          <select value={monthVal} onChange={handleChangeMonth}>
-            {monthList.map((month) => (
-              <option key={month} value={month}>
-                {month + 1}
-              </option>
-            ))}
-          </select>
-          <select value={dayVal} onChange={handleChangeDay}>
-            {dayList.map((day) => (
-              <option key={day} value={day}>
-                {day}
-              </option>
-            ))}
-          </select>{' '}
           <select value={integerVal} onChange={handleChangeInteger}>
             {integerList.map((integer) => (
               <option key={integer} value={integer}>
@@ -132,10 +144,6 @@ export default function Page() {
         </div>
 
         <Button onClick={handleSave}>記録する</Button>
-      </div>
-
-      <div className="my-8">
-        <CustomSelect list={yearList} selectedVal={yearVal} onChange={handleChangeYear2} />
       </div>
     </Container>
   )

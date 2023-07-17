@@ -8,7 +8,7 @@ export const wrapStyle = style({
   placeContent: 'center',
   gridTemplateColumns: '100%',
   width: '300px',
-  height: '500px',
+  height: '140px',
   transformStyle: 'preserve-3d',
   perspective: '1000px',
   outline: '1px solid red',
@@ -40,7 +40,12 @@ export const itemStyle = style({
   display: 'grid',
   placeContent: 'center',
   outline: '1px solid blue',
-  // transform: `rotateX(${rotateXVar}) translateZ(60px)`,
-  transform: `rotateX(${rotateXVar}) translateZ(200px)`,
+  transform: `rotateX(${rotateXVar}) translateZ(60px)`,
   opacity: opacityVar,
+})
+
+export const dragAreaStyle = style({
+  position: 'fixed',
+  inset: 0,
+  backgroundColor: 'rgb(0, 0, 0, 0.2)',
 })
