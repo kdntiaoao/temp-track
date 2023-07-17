@@ -10,7 +10,7 @@ import { useBodyTemp } from '@/hooks/useBodyTemp'
 export const Table = () => {
   const [isScrollable, setIsScrollable] = useState(false)
   const tableRef = useRef<HTMLTableElement>(null)
-  const { bodyTempList } = useBodyTemp()
+  const { bodyTempList, deleteBodyTemp } = useBodyTemp()
 
   const handleScroll = (ev: React.UIEvent<HTMLTableElement, UIEvent>) => {
     const target = ev.target as HTMLTableElement
@@ -23,8 +23,8 @@ export const Table = () => {
     alert('Click Edit Button!!')
   }
 
-  const handleClickDel = () => {
-    alert('Click Delete Button!!')
+  const handleClickDel = (id: string) => {
+    deleteBodyTemp(id)
   }
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export const Table = () => {
               <td className={tdStyle}>
                 <span className={buttonGroupStyle}>
                   <Button onClick={handleClickEdit}>編集</Button>
-                  <Button color={vars.color.error['60']} onClick={handleClickDel}>
+                  <Button color={vars.color.error['60']} onClick={() => handleClickDel(bodyTemp.id)}>
                     削除
                   </Button>
                 </span>

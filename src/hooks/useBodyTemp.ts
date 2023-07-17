@@ -19,8 +19,15 @@ export const useBodyTemp = () => {
       time,
       bodyTemp,
     }
-    window.localStorage.setItem('bodyTempList', JSON.stringify([...(bodyTempList || []), data]))
-    setBodyTempList([...(bodyTempList || []), data])
+    const result = [...(bodyTempList || []), data]
+    window.localStorage.setItem('bodyTempList', JSON.stringify(result))
+    setBodyTempList(result)
+  }
+
+  const deleteBodyTemp = (id: string) => {
+    const result = bodyTempList?.filter((bodyTemp) => bodyTemp.id !== id) || []
+    window.localStorage.setItem('bodyTempList', JSON.stringify(result))
+    setBodyTempList(result)
   }
 
   useEffect(() => {
@@ -36,5 +43,5 @@ export const useBodyTemp = () => {
     }
   }, [bodyTempList])
 
-  return { bodyTempList, isLoading, registerBodyTemp }
+  return { bodyTempList, isLoading, registerBodyTemp, deleteBodyTemp }
 }
