@@ -8,8 +8,8 @@ import { LinkText } from '@/app/_components/LinkText'
 import { useBodyTemp } from '@/hooks/useBodyTemp'
 import { ChangeEvent, useEffect, useState } from 'react'
 import dayjs from 'dayjs'
+import { CustomSelect } from '../_components/CustomSelect'
 
-const yearList = [2020, 2021, 2022, 2023, 2024, 2025]
 const monthList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 const integerList = ['34', '35', '36', '37', '38', '39', '40', '41', '42']
 const decimalList = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -27,6 +27,10 @@ export default function Page() {
 
   const handleChangeYear = (ev: ChangeEvent<HTMLSelectElement>) => {
     setYearVal(Number(ev.target.value))
+  }
+
+  const handleChangeYear2 = (val: string | number) => {
+    setYearVal(Number(val))
   }
 
   const handleChangeMonth = (ev: ChangeEvent<HTMLSelectElement>) => {
@@ -57,7 +61,7 @@ export default function Page() {
     const month = now.month()
     const day = now.date()
 
-    const DISPLAYED_YEAR_LENGTH = 6
+    const DISPLAYED_YEAR_LENGTH = 500
     const yearList = Array(DISPLAYED_YEAR_LENGTH)
       .fill(now.year())
       .map((base, i) => {
@@ -128,6 +132,10 @@ export default function Page() {
         </div>
 
         <Button onClick={handleSave}>記録する</Button>
+      </div>
+
+      <div className="my-8">
+        <CustomSelect list={yearList} selectedVal={yearVal} onChange={handleChangeYear2} />
       </div>
     </Container>
   )
