@@ -25,10 +25,16 @@ export const CustomSelect = ({ list, selectedVal, onChange }: Props) => {
     return list.map((item, i) => ({ value: item, difference: -i * DEGREE_DISTANCE }))
   }, [list])
 
-  const handlePointerDown = (ev: React.MouseEvent<HTMLElement>) => {
+  const handlePointerDown = (
+    ev: React.PointerEvent<HTMLElement> | React.TouchEvent<HTMLElement> | React.MouseEvent<HTMLElement>
+  ) => {
     window.cancelAnimationFrame(requestId)
     setIsPointerDown(true)
-    setStartingY(ev.clientY)
+
+    const clientY =
+      (ev as React.PointerEvent<HTMLElement>).clientY || (ev as React.TouchEvent<HTMLElement>).touches[0].clientY
+    setStartingY(clientY)
+
     setSpeed(0)
     setIsDisplayedDragArea(true)
   }
@@ -60,11 +66,18 @@ export const CustomSelect = ({ list, selectedVal, onChange }: Props) => {
   }, [animateStopScroll])
 
   const handlePointerMove = useCallback(
-    (ev: MouseEvent | PointerEvent) => {
+    (ev: MouseEvent | PointerEvent | TouchEvent) => {
       if (!isPointerDown) return
 
-      const delta = (ev.clientY - startingY) / 1000
-      setSpeed((speed) => speed + delta)
+      if (ev instanceof MouseEvent) {
+        const delta = (ev.clientY - startingY) / 1000
+        setSpeed((speed) => speed + delta)
+      } else if (ev instanceof TouchEvent) {
+        const delta = (ev.touches[0].clientY - startingY) / 1000
+        setSpeed((speed) => speed + delta)
+      } else {
+        console.error('予期しないイベントです')
+      }
     },
     [isPointerDown, startingY]
   )
@@ -126,34 +139,51 @@ export const CustomSelect = ({ list, selectedVal, onChange }: Props) => {
   // スクロールイベント
   useEffect(() => {
     // 一回すべてのイベントを削除
-    window.removeEventListener('pointerup', stopScroll, true)
-    window.removeEventListener('mouseup', stopScroll, true)
-    window.removeEventListener('pointerleave', stopScroll, true)
-    window.removeEventListener('mouseleave', stopScroll, true)
-    window.removeEventListener('pointermove', handlePointerMove, true)
-    window.removeEventListener('mousemove', handlePointerMove, true)
+    window.onpointerup = null
+    window.ontouchend = null
+    window.onmouseup = null
+    window.onpointerleave = null
+    window.onmouseleave = null
+    window.onpointermove = null
+    window.ontouchmove = null
+    window.onmousemove = null
 
     // イベント設定
-    window.addEventListener('pointerup', stopScroll, true)
-    window.addEventListener('mouseup', stopScroll, true)
-    window.addEventListener('pointerleave', stopScroll, true)
-    window.addEventListener('mouseleave', stopScroll, true)
-    window.addEventListener('pointermove', handlePointerMove, true)
-    window.addEventListener('mousemove', handlePointerMove, true)
+    window.onpointerup = stopScroll
+    window.ontouchend = stopScroll
+    window.onmouseup = stopScroll
+    window.onpointerleave = stopScroll
+    window.onmouseleave = stopScroll
+    window.onpointermove = handlePointerMove
+    window.ontouchmove = handlePointerMove
+    window.onmousemove = handlePointerMove
 
     return () => {
-      window.removeEventListener('pointerup', stopScroll, true)
-      window.removeEventListener('mouseup', stopScroll, true)
-      window.removeEventListener('pointerleave', stopScroll, true)
-      window.removeEventListener('mouseleave', stopScroll, true)
-      window.removeEventListener('pointermove', handlePointerMove, true)
-      window.removeEventListener('mousemove', handlePointerMove, true)
+      window.onpointerup = null
+      window.onmouseup = null
+      window.onpointerleave = null
+      window.onmouseleave = null
+      window.onpointermove = null
+      window.onmousemove = null
     }
   }, [handlePointerMove, stopScroll])
 
+  useEffect(() => {
+    if (isPointerDown) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'auto'
+    }
+  }, [isPointerDown])
+
   return (
     <>
-      <div className={wrapStyle} onPointerDown={handlePointerDown} onMouseDown={handlePointerDown}>
+      <div
+        className={wrapStyle}
+        onPointerDown={handlePointerDown}
+        onTouchStart={handlePointerDown}
+        onMouseDown={handlePointerDown}
+      >
         <div className={listStyle}>
           {list.map((item, index) => (
             <div
