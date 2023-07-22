@@ -95,8 +95,12 @@ export const EditModal = ({ edittedId, onClose }: Props) => {
   }, [monthVal, yearVal])
 
   return (
-    <div className={wrapStyle}>
-      <div className={modalStyle}>
+    <div className={wrapStyle} onPointerDown={onClose} onMouseDown={onClose}>
+      <div
+        className={modalStyle}
+        onPointerDown={(ev) => ev.stopPropagation()}
+        onMouseDown={(ev) => ev.stopPropagation()}
+      >
         <div className="flex gap-4">
           {yearVal && monthVal && dayVal && (
             <>
