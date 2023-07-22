@@ -2,7 +2,7 @@
 
 import { assignInlineVars } from '@vanilla-extract/dynamic'
 import { dragAreaStyle, itemStyle, listStyle, opacityVar, rotateXVar, wrapStyle } from './CustomSelect.css'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 type Props = {
   list: string[]
@@ -33,13 +33,7 @@ export const CustomSelect = ({ list, selectedVal, onChange }: Props) => {
     setIsDisplayedDragArea(true)
   }
 
-  const stopScroll = (ev: React.MouseEvent<HTMLElement>) => {
-    setIsPointerDown(false)
-    setIsDisplayedDragArea(false)
-    animateStopScroll()
-  }
-
-  const animateStopScroll = () => {
+  const animateStopScroll = useCallback(() => {
     window.cancelAnimationFrame(requestId)
 
     let isStop = false
@@ -57,14 +51,23 @@ export const CustomSelect = ({ list, selectedVal, onChange }: Props) => {
     }
 
     requestId = window.requestAnimationFrame(animateStopScroll)
-  }
+  }, [])
 
-  const handlePointerMove = (ev: React.MouseEvent<HTMLElement>) => {
-    if (!isPointerDown) return
+  const stopScroll = useCallback(() => {
+    setIsPointerDown(false)
+    setIsDisplayedDragArea(false)
+    animateStopScroll()
+  }, [animateStopScroll])
 
-    const delta = (ev.clientY - startingY) / 1000
-    setSpeed((speed) => speed + delta)
-  }
+  const handlePointerMove = useCallback(
+    (ev: MouseEvent | PointerEvent) => {
+      if (!isPointerDown) return
+
+      const delta = (ev.clientY - startingY) / 1000
+      setSpeed((speed) => speed + delta)
+    },
+    [isPointerDown, startingY]
+  )
 
   const getRoteX = (index: number) => {
     const degree = index * DEGREE_DISTANCE + difference
@@ -120,6 +123,34 @@ export const CustomSelect = ({ list, selectedVal, onChange }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [list])
 
+  // スクロールイベント
+  useEffect(() => {
+    // 一回すべてのイベントを削除
+    window.removeEventListener('pointerup', stopScroll, true)
+    window.removeEventListener('mouseup', stopScroll, true)
+    window.removeEventListener('pointerleave', stopScroll, true)
+    window.removeEventListener('mouseleave', stopScroll, true)
+    window.removeEventListener('pointermove', handlePointerMove, true)
+    window.removeEventListener('mousemove', handlePointerMove, true)
+
+    // イベント設定
+    window.addEventListener('pointerup', stopScroll, true)
+    window.addEventListener('mouseup', stopScroll, true)
+    window.addEventListener('pointerleave', stopScroll, true)
+    window.addEventListener('mouseleave', stopScroll, true)
+    window.addEventListener('pointermove', handlePointerMove, true)
+    window.addEventListener('mousemove', handlePointerMove, true)
+
+    return () => {
+      window.removeEventListener('pointerup', stopScroll, true)
+      window.removeEventListener('mouseup', stopScroll, true)
+      window.removeEventListener('pointerleave', stopScroll, true)
+      window.removeEventListener('mouseleave', stopScroll, true)
+      window.removeEventListener('pointermove', handlePointerMove, true)
+      window.removeEventListener('mousemove', handlePointerMove, true)
+    }
+  }, [handlePointerMove, stopScroll])
+
   return (
     <>
       <div className={wrapStyle} onPointerDown={handlePointerDown} onMouseDown={handlePointerDown}>
@@ -136,17 +167,7 @@ export const CustomSelect = ({ list, selectedVal, onChange }: Props) => {
         </div>
       </div>
 
-      {isDisplayedDragArea && (
-        <div
-          className={dragAreaStyle}
-          onPointerUp={stopScroll}
-          onMouseUp={stopScroll}
-          onPointerLeave={stopScroll}
-          onMouseLeave={stopScroll}
-          onPointerMove={handlePointerMove}
-          onMouseMove={handlePointerMove}
-        ></div>
-      )}
+      {isDisplayedDragArea && <div className={dragAreaStyle}></div>}
     </>
   )
 }
