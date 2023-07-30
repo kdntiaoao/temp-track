@@ -126,24 +126,22 @@ export const CustomSelect = ({ list }: Props) => {
   }, [])
 
   return (
-    <>
-      <div
-        className={containerStyle}
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onTouchMove={handleTouchMove}
-      >
-        {makedList.map((item, index) => (
-          <div
-            key={index}
-            className={`${itemStyle} ${index === 0 ? 'text-red-700' : ''}`}
-            style={assignInlineVars({ [rotateXVar]: getRotateX(index) })}
-          >
-            {item}
-          </div>
-        ))}
-      </div>
-    </>
+    <div
+      className={containerStyle}
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onTouchMove={handleTouchMove}
+    >
+      {makedList.map((item, index) => (
+        <div
+          key={index}
+          className={`${itemStyle} ${index === 0 ? 'text-red-700' : ''}`}
+          style={assignInlineVars({ [rotateXVar]: getRotateX(index) })}
+        >
+          {item}
+        </div>
+      ))}
+    </div>
   )
 }
