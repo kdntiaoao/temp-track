@@ -100,8 +100,15 @@ export const CustomSelect = ({ list }: Props) => {
       if (speedRef.current !== 0) {
         setAddedDegree((degree) => {
           let result = (degree + speedRef.current) % maxDegree
-          if (!isActive && speedRef.current !== 0 && Math.abs(speedRef.current) < 0.5) {
-            const remainder = result % (360 / lengthPerRotation)
+          const remainder = result % (360 / lengthPerRotation)
+          if (
+            !isActive &&
+            speedRef.current !== 0 &&
+            (((remainder < 360 / lengthPerRotation / 10 ||
+              360 / lengthPerRotation - remainder < 360 / lengthPerRotation / 10) &&
+              Math.abs(speedRef.current) < 2) ||
+              Math.abs(speedRef.current) < 0.1)
+          ) {
             result -= remainder < 360 / lengthPerRotation / 2 ? remainder : 360 / lengthPerRotation - remainder
             speedRef.current = 0
             // console.log({ result })
