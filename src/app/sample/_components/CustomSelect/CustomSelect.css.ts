@@ -2,19 +2,15 @@ import { createVar, style } from '@vanilla-extract/css'
 
 const radius = 60
 const marginX = 40
-// const containerHeight = itemHeight + radius * 2
 
 export const rotateXVar = createVar()
 
 export const containerStyle = style({
   display: 'grid',
-  // placeItems: 'center',
-  // placeContent: 'center',
   alignItems: 'center',
   transformStyle: 'preserve-3d',
   perspective: '800px',
   width: `100%`,
-  // height: `${containerHeight}px`,
   padding: `${radius - 20}px ${marginX}px`,
   margin: '2rem auto',
   userSelect: 'none',
