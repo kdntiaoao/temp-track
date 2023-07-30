@@ -103,16 +103,41 @@ export const CustomSelect = ({ list }: Props) => {
           const remainder = result % (360 / lengthPerRotation)
           if (
             !isActive &&
-            speedRef.current !== 0 &&
             (((remainder < 360 / lengthPerRotation / 10 ||
               360 / lengthPerRotation - remainder < 360 / lengthPerRotation / 10) &&
               Math.abs(speedRef.current) < 2) ||
               Math.abs(speedRef.current) < 0.1)
           ) {
-            result -= remainder < 360 / lengthPerRotation / 2 ? remainder : 360 / lengthPerRotation - remainder
+            console.log(
+              result,
+              remainder < 360 / lengthPerRotation / 2 ? remainder : 360 / lengthPerRotation - remainder
+            )
+            if (result > 0) {
+              if (Math.abs(remainder) < 360 / lengthPerRotation / 2) {
+                result -= Math.abs(remainder)
+              } else {
+                result += 360 / lengthPerRotation - Math.abs(remainder)
+              }
+              // result -=
+              //   Math.abs(remainder) < 360 / lengthPerRotation / 2 ? remainder : 360 / lengthPerRotation - remainder
+            } else {
+              if (Math.abs(remainder) < 360 / lengthPerRotation / 2) {
+                result += Math.abs(remainder)
+              } else {
+                result -= 360 / lengthPerRotation - Math.abs(remainder)
+              }
+              // result +=
+              //   Math.abs(remainder) < 360 / lengthPerRotation / 2 ? remainder : 360 / lengthPerRotation - remainder
+            }
+            // result -= remainder
             speedRef.current = 0
-            // console.log({ result })
           }
+          console.log({
+            result,
+            remainder,
+            angle: 360 / lengthPerRotation,
+            isUp: remainder < 360 / lengthPerRotation / 2,
+          })
           return result
         })
       }
@@ -139,6 +164,10 @@ export const CustomSelect = ({ list }: Props) => {
       window.removeEventListener('touchend', handleMouseUp, true)
     }
   }, [])
+
+  useEffect(() => {
+    console.log({ addedDegree, maxDegree })
+  }, [addedDegree])
 
   return (
     <div

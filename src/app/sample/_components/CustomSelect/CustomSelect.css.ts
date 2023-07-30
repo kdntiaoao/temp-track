@@ -1,6 +1,6 @@
 import { createVar, style } from '@vanilla-extract/css'
 
-const radius = 100
+const radius = 120
 
 export const rotateXVar = createVar()
 
@@ -10,7 +10,7 @@ export const containerStyle = style({
   transformStyle: 'preserve-3d',
   perspective: '800px',
   width: `100%`,
-  padding: `${radius - 10}px ${radius / 3}px`,
+  padding: `${radius / 1.2}px ${radius / 3}px`,
   margin: '2rem auto',
   userSelect: 'none',
   overflow: 'hidden',

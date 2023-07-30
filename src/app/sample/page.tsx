@@ -12,7 +12,7 @@ export default function Page() {
   return (
     <div className="m-4">
       <CustomSelect list={list1} />
-      <CustomSelect list={list2} />
+      {/* <CustomSelect list={list2} /> */}
     </div>
   )
 }
