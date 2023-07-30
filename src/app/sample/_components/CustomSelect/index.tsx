@@ -51,8 +51,8 @@ export const CustomSelect = ({ list }: Props) => {
       if (Math.abs(rotateX) > 90) {
         rotateX = -90
       }
-      // if (index === makedList.length - 1) {
-      // console.log({ index, degree, addedDegree, maxDegree, rotateX })
+      // if (index === 0) {
+      //   console.log({ index, degree, addedDegree, maxDegree, rotateX })
       // }
       return `${-rotateX}deg`
     },
@@ -96,19 +96,27 @@ export const CustomSelect = ({ list }: Props) => {
   )
 
   useEffect(() => {
-    const addDegree = (timestamp: number) => {
-      setAddedDegree((degree) => {
-        const result = (degree + speedRef.current) % maxDegree
-        return result
-      })
-      speedRef.current = Math.abs(speedRef.current * 0.9) > 0.01 ? speedRef.current * 0.9 : 0
+    const addDegree = () => {
+      if (speedRef.current !== 0) {
+        setAddedDegree((degree) => {
+          let result = (degree + speedRef.current) % maxDegree
+          if (!isActive && speedRef.current !== 0 && Math.abs(speedRef.current) < 0.5) {
+            const remainder = result % (360 / lengthPerRotation)
+            result -= remainder < 360 / lengthPerRotation / 2 ? remainder : 360 / lengthPerRotation - remainder
+            speedRef.current = 0
+            // console.log({ result })
+          }
+          return result
+        })
+      }
+      speedRef.current = Math.abs(speedRef.current * 0.9) > 0.001 ? speedRef.current * 0.9 : 0
       reqRef.current = window.requestAnimationFrame(addDegree)
     }
-    addDegree(1)
+    addDegree()
     return () => {
       window.cancelAnimationFrame(reqRef.current)
     }
-  }, [maxDegree])
+  }, [isActive, maxDegree])
 
   useEffect(() => {
     const handleMouseUp = () => {
