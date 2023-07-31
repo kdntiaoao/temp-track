@@ -1,203 +1,189 @@
-'use state'
+'use client'
 
 import { assignInlineVars } from '@vanilla-extract/dynamic'
-import { dragAreaStyle, itemStyle, listStyle, opacityVar, rotateXVar, wrapStyle } from './CustomSelect.css'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { containerStyle, itemStyle, rotateXVar } from './CustomSelect.css'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+
+type Item = string
 
 type Props = {
-  list: string[]
+  list: Item[]
   selectedVal: string
   onChange: (val: string) => void
 }
 
-const DEGREE_DISTANCE = 30
-let requestId = 0
+const lengthPerRotation = 12
+const distanceDegree = 360 / lengthPerRotation
 
 export const CustomSelect = ({ list, selectedVal, onChange }: Props) => {
-  const [isPointerDown, setIsPointerDown] = useState(false)
-  const [startingY, setStartingY] = useState(0)
-  const [difference, setDifference] = useState(0)
-  const [speed, setSpeed] = useState(0)
-  const [isDisplayedDragArea, setIsDisplayedDragArea] = useState(false)
+  const [addedDegree, setAddedDegree] = useState<number>(0)
+  const [isActive, setIsActive] = useState<boolean>(false)
+  const reqIDRef = useRef<number>(0) // cancelAnimationFrame() 用のID
+  const speedRef = useRef<number>(0)
+  const prevClientYRef = useRef<number | null>(null)
 
-  // ちょうどよいdifference
-  const stopingDifferenceList = useMemo(() => {
-    return list.map((item, i) => ({ value: item, difference: -i * DEGREE_DISTANCE }))
+  const makedList = useMemo<Item[]>(() => {
+    if (list.length >= lengthPerRotation + 3) {
+      return list
+    }
+
+    if (!list.length) {
+      return list
+    }
+
+    const num = Math.trunc((lengthPerRotation + 3) / list.length) + 1
+
+    return Array(list.length * num)
+      .fill(null)
+      .map((_, i) => {
+        return list[i % list.length]
+      })
   }, [list])
 
-  const handlePointerDown = (
-    ev: React.PointerEvent<HTMLElement> | React.TouchEvent<HTMLElement> | React.MouseEvent<HTMLElement>
-  ) => {
-    window.cancelAnimationFrame(requestId)
-    setIsPointerDown(true)
+  const maxDegree = useMemo<number>(() => makedList.length * distanceDegree, [makedList.length])
 
-    const clientY =
-      (ev as React.PointerEvent<HTMLElement>).clientY || (ev as React.TouchEvent<HTMLElement>).touches[0].clientY
-    setStartingY(clientY)
+  const getRotateX = useCallback<(index: number) => string>(
+    (index: number): string => {
+      const degree = index * distanceDegree
+      let result = degree + addedDegree
 
-    setSpeed(0)
-    setIsDisplayedDragArea(true)
-  }
-
-  const animateStopScroll = useCallback(() => {
-    window.cancelAnimationFrame(requestId)
-
-    let isStop = false
-    setSpeed((speed) => {
-      // 0に近くなったら0にする
-      const result = Math.trunc(speed * 0.8 * 1000) / 1000
-      if (result === 0) {
-        isStop = true
+      if (Math.abs(result) > maxDegree) {
+        result %= maxDegree
       }
-      return result
-    })
 
-    if (isStop) {
-      return
-    }
-
-    requestId = window.requestAnimationFrame(animateStopScroll)
-  }, [])
-
-  const stopScroll = useCallback(() => {
-    setIsPointerDown(false)
-    setIsDisplayedDragArea(false)
-    animateStopScroll()
-  }, [animateStopScroll])
-
-  const handlePointerMove = useCallback(
-    (ev: MouseEvent | PointerEvent | TouchEvent) => {
-      if (!isPointerDown) return
-
-      if (ev instanceof MouseEvent) {
-        const delta = (ev.clientY - startingY) / 1000
-        setSpeed((speed) => speed + delta)
-      } else if (ev instanceof TouchEvent) {
-        const delta = (ev.touches[0].clientY - startingY) / 1000
-        setSpeed((speed) => speed + delta)
-      } else {
-        console.error('予期しないイベントです')
+      if (Math.abs(result) > maxDegree / 2) {
+        result = Math.sign(result) * (Math.abs(result) - maxDegree)
       }
+
+      if (Math.abs(result) >= 90) {
+        result = 90
+      }
+
+      // 下向きを正にするため、 - をつける
+      return `${-result}deg`
     },
-    [isPointerDown, startingY]
+    [addedDegree, maxDegree]
   )
 
-  const getRoteX = (index: number) => {
-    const degree = index * DEGREE_DISTANCE + difference
-    return -degree + 'deg'
-  }
+  const handleMouseDown = useCallback<() => void>(() => {
+    setIsActive(true)
+    speedRef.current = 0
+    prevClientYRef.current = null
+    window.document.body.style.overflowY = 'hidden'
+    window.document.body.style.height = '100vh'
+  }, [])
 
-  const getOpacity = (index: number) => {
-    const absDegree = Math.abs(index * DEGREE_DISTANCE + difference)
-    if (absDegree > 90) {
-      return '0'
-    }
-    return ((90 - absDegree) / 90).toString()
-  }
+  const handleMouseMove = useCallback<(ev: React.MouseEvent<HTMLDivElement, MouseEvent>) => void>(
+    (ev) => {
+      if (!isActive) {
+        return
+      }
 
-  const getNear = (difference: number) => {
-    return stopingDifferenceList.find((item) => Math.abs(item.difference - difference) < DEGREE_DISTANCE * 0.5)
-  }
+      if (prevClientYRef.current !== null) {
+        const diff = ev.clientY - prevClientYRef.current
+        speedRef.current += diff / 10
+      }
+
+      prevClientYRef.current = ev.clientY
+    },
+    [isActive]
+  )
+
+  const handleTouchMove = useCallback<(ev: React.TouchEvent<HTMLDivElement>) => void>(
+    (ev) => {
+      if (!isActive) {
+        return
+      }
+
+      if (prevClientYRef.current !== null) {
+        const diff = ev.touches[0].clientY - prevClientYRef.current
+        speedRef.current += diff / 10
+      }
+
+      prevClientYRef.current = ev.touches[0].clientY
+    },
+    [isActive]
+  )
 
   useEffect(() => {
-    setDifference((prev) => {
-      const result = prev + speed
-      if (result >= 0) {
-        setSpeed(0)
-        return 0
+    const animate = () => {
+      if (speedRef.current) {
+        window.cancelAnimationFrame(reqIDRef.current)
+
+        setAddedDegree((prev: number): number => {
+          if (!isActive && Math.abs(speedRef.current) < 0.5) {
+            if (Math.abs(prev) % distanceDegree > distanceDegree / 2) {
+              speedRef.current *= Math.sign(speedRef.current)
+            } else {
+              speedRef.current *= -Math.sign(speedRef.current)
+            }
+          }
+
+          if (!isActive && Math.abs(speedRef.current) < 1.5 && Math.abs(prev % distanceDegree) < 0.5) {
+            return prev - (prev % distanceDegree)
+          }
+          const result = (prev + speedRef.current) % maxDegree
+          return result
+        })
+
+        speedRef.current = Math.abs(speedRef.current) > 0.6 ? speedRef.current * 0.95 : speedRef.current
       }
-      if (result <= -(list.length - 1) * DEGREE_DISTANCE) {
-        setSpeed(0)
-        return -(list.length - 1) * DEGREE_DISTANCE
-      }
-      const near = getNear(result)
-      if (!isPointerDown && speed < 0.01 && near !== undefined) {
-        setSpeed(0)
-        return near.difference
-      }
-      return result
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [list.length, speed])
+      reqIDRef.current = window.requestAnimationFrame(animate)
+    }
+    animate()
+
+    return () => {
+      window.cancelAnimationFrame(reqIDRef.current)
+    }
+  }, [isActive, maxDegree])
 
   useEffect(() => {
-    if (speed === 0) {
-      const selected = stopingDifferenceList.find((item) => item.difference === difference)
-      console.log(selected?.value)
-      if (selected !== undefined) {
-        onChange(selected.value)
+    if (!isActive && addedDegree % distanceDegree === 0) {
+      const selected = makedList.at(-addedDegree / distanceDegree)
+      if (selected) {
+        onChange(selected)
       }
     }
-  }, [difference, onChange, speed, stopingDifferenceList])
+  }, [addedDegree, isActive, makedList, onChange])
 
   useEffect(() => {
     const selectedIndex = list.indexOf(selectedVal)
-    setDifference(-selectedIndex * DEGREE_DISTANCE)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [list])
+    setAddedDegree(-selectedIndex * distanceDegree)
 
-  // スクロールイベント
-  useEffect(() => {
-    // 一回すべてのイベントを削除
-    window.onpointerup = null
-    window.ontouchend = null
-    window.onmouseup = null
-    window.onpointerleave = null
-    window.onmouseleave = null
-    window.onpointermove = null
-    window.ontouchmove = null
-    window.onmousemove = null
+    const handleMouseUp = () => {
+      setIsActive(false)
 
-    // イベント設定
-    window.onpointerup = stopScroll
-    window.ontouchend = stopScroll
-    window.onmouseup = stopScroll
-    window.onpointerleave = stopScroll
-    window.onmouseleave = stopScroll
-    window.onpointermove = handlePointerMove
-    window.ontouchmove = handlePointerMove
-    window.onmousemove = handlePointerMove
+      window.document.body.style.overflowY = ''
+      window.document.body.style.height = ''
+    }
+
+    window.addEventListener('mouseup', handleMouseUp, true)
+    window.addEventListener('touchend', handleMouseUp, true)
 
     return () => {
-      window.onpointerup = null
-      window.onmouseup = null
-      window.onpointerleave = null
-      window.onmouseleave = null
-      window.onpointermove = null
-      window.onmousemove = null
+      window.removeEventListener('mouseup', handleMouseUp, true)
+      window.removeEventListener('touchend', handleMouseUp, true)
     }
-  }, [handlePointerMove, stopScroll])
-
-  useEffect(() => {
-    if (isPointerDown) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'auto'
-    }
-  }, [isPointerDown])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [list, makedList])
 
   return (
-    <>
-      <div
-        className={wrapStyle}
-        onPointerDown={handlePointerDown}
-        onTouchStart={handlePointerDown}
-        onMouseDown={handlePointerDown}
-      >
-        <div className={listStyle}>
-          {list.map((item, index) => (
-            <div
-              key={item}
-              className={itemStyle}
-              style={assignInlineVars({ [rotateXVar]: getRoteX(index), [opacityVar]: getOpacity(index) })}
-            >
-              {item}
-            </div>
-          ))}
+    <div
+      className={containerStyle}
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onTouchMove={handleTouchMove}
+    >
+      {makedList.map((item, index) => (
+        <div
+          key={index}
+          className={`${itemStyle} ${index === 0 ? 'text-red-700' : ''}`}
+          style={assignInlineVars({ [rotateXVar]: getRotateX(index) })}
+        >
+          {item}
         </div>
-      </div>
-
-      {isDisplayedDragArea && <div className={dragAreaStyle}></div>}
-    </>
+      ))}
+    </div>
   )
 }

@@ -20,12 +20,6 @@ export default function Home() {
           <li>
             <LinkText href="/register">体温を記録する</LinkText>
           </li>
-          <li>
-            <LinkText href="/sample">サンプル</LinkText>
-          </li>
-          <li>
-            <LinkText href="/sample2">サンプル2</LinkText>
-          </li>
         </ul>
       </Container>
     </>

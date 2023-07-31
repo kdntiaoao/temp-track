@@ -55,7 +55,6 @@ export default function Page() {
       .second(0)
       .millisecond(0)
       .valueOf()
-    console.log({ yearVal, monthVal, dayVal })
     registerBodyTemp(time, integerVal + '.' + decimalVal)
     router.push('/')
   }
@@ -66,7 +65,7 @@ export default function Page() {
     const month = now.month()
     const day = now.date()
 
-    const DISPLAYED_YEAR_LENGTH = 500
+    const DISPLAYED_YEAR_LENGTH = 20
     const yearList = Array(DISPLAYED_YEAR_LENGTH)
       .fill(now.year())
       .map((base: number, i) => {

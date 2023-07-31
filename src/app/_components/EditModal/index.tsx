@@ -53,7 +53,6 @@ export const EditModal = ({ edittedId, onClose }: Props) => {
       .second(0)
       .millisecond(0)
       .valueOf()
-    console.log({ yearVal, monthVal, dayVal })
     editBodyTemp(edittedId, time, integerVal + '.' + decimalVal)
 
     onClose()

@@ -1,52 +1,42 @@
 import { createVar, style } from '@vanilla-extract/css'
 
+const radius = 60
+
 export const rotateXVar = createVar()
-export const opacityVar = createVar()
 
-export const wrapStyle = style({
+export const containerStyle = style({
   display: 'grid',
-  placeContent: 'center',
-  gridTemplateColumns: '100%',
-  width: '300px',
-  height: '140px',
+  alignItems: 'center',
   transformStyle: 'preserve-3d',
-  perspective: '1000px',
-  outline: '1px solid red',
+  perspective: '800px',
+  width: `100%`,
+  padding: `${radius / 1.5}px ${radius / 2}px`,
+  margin: '2rem auto',
   userSelect: 'none',
-})
-
-export const listStyle = style({
-  position: 'relative',
-  width: '100%',
-  height: '24px',
+  overflow: 'hidden',
+  outline: '1px solid red',
   selectors: {
     '&::after': {
-      position: 'absolute',
       content: '',
-      top: '50%',
-      left: 0,
-      right: 0,
-      height: '1px',
       display: 'block',
-      backgroundColor: 'red',
-      transform: '0 -50%',
+      width: '100%',
+      height: '1px',
+      scale: '2 1',
+      gridColumn: 1 / 1,
+      gridRow: 1 / 1,
+      backgroundColor: 'blue',
     },
   },
 })
 
 export const itemStyle = style({
-  position: 'absolute',
-  inset: 0,
   display: 'grid',
   placeContent: 'center',
-  outline: '1px solid blue',
-  transform: `rotateX(${rotateXVar}) translateZ(60px)`,
-  opacity: opacityVar,
-})
-
-export const dragAreaStyle = style({
-  position: 'fixed',
-  inset: 0,
-  zIndex: 999,
-  backgroundColor: 'rgb(0, 0, 255, 0.2)',
+  gridColumn: 1 / 1,
+  gridRow: 1 / 1,
+  width: `100%`,
+  backgroundColor: '#ddd',
+  opacity: 0.6,
+  border: '2px solid #aaa',
+  transform: `rotateX(${rotateXVar}) translateZ(${radius}px)`,
 })
