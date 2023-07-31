@@ -101,11 +101,24 @@ export const CustomSelect = ({ list }: Props) => {
     const animate = () => {
       if (speedRef.current) {
         window.cancelAnimationFrame(reqIDRef.current)
+
         setAddedDegree((prev: number): number => {
-          let result = (prev + speedRef.current) % maxDegree
+          if (!isActive && Math.abs(speedRef.current) < 0.5) {
+            if (Math.abs(prev) % distanceDegree > distanceDegree / 2) {
+              speedRef.current *= Math.sign(speedRef.current)
+            } else {
+              speedRef.current *= -Math.sign(speedRef.current)
+            }
+          }
+
+          if (!isActive && Math.abs(speedRef.current) < 1.5 && Math.abs(prev % distanceDegree) < 0.5) {
+            return prev - (prev % distanceDegree)
+          }
+          const result = (prev + speedRef.current) % maxDegree
           return result
         })
-        speedRef.current = Math.abs(speedRef.current) > 0.001 ? speedRef.current * 0.9 : 0
+
+        speedRef.current = Math.abs(speedRef.current) > 0.6 ? speedRef.current * 0.95 : speedRef.current
       }
       reqIDRef.current = window.requestAnimationFrame(animate)
     }
@@ -114,7 +127,7 @@ export const CustomSelect = ({ list }: Props) => {
     return () => {
       window.cancelAnimationFrame(reqIDRef.current)
     }
-  }, [maxDegree])
+  }, [isActive, maxDegree])
 
   useEffect(() => {
     const handleMouseUp = () => {
