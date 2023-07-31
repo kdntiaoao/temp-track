@@ -36,25 +36,20 @@ export const CustomSelect = ({ list }: Props) => {
 
   const getRotateX = useCallback<(index: number) => string>(
     (index: number): string => {
-      // const degree =
-      //   index < makedList.length / 2 ? index * distanceDegree : (makedList.length - index) * -distanceDegree
       const degree = index * distanceDegree
       let result = degree + addedDegree
+
       if (Math.abs(result) > maxDegree) {
         result %= maxDegree
       }
+
       if (Math.abs(result) > maxDegree / 2) {
         result = Math.sign(result) * (Math.abs(result) - maxDegree)
       }
+
       if (Math.abs(result) >= 90) {
         result = 90
-      } else {
-        // console.log({ index, degree, result })
       }
-
-      // if (index === 0) {
-      //   console.log({ result })
-      // }
 
       // 下向きを正にするため、 - をつける
       return `${-result}deg`
@@ -75,11 +70,12 @@ export const CustomSelect = ({ list }: Props) => {
       if (!isActive) {
         return
       }
-      ev.stopPropagation()
+
       if (prevClientYRef.current !== null) {
         const diff = ev.clientY - prevClientYRef.current
         speedRef.current += diff / 10
       }
+
       prevClientYRef.current = ev.clientY
     },
     [isActive]
@@ -90,11 +86,12 @@ export const CustomSelect = ({ list }: Props) => {
       if (!isActive) {
         return
       }
-      ev.stopPropagation()
+
       if (prevClientYRef.current !== null) {
         const diff = ev.touches[0].clientY - prevClientYRef.current
         speedRef.current += diff / 10
       }
+
       prevClientYRef.current = ev.touches[0].clientY
     },
     [isActive]
@@ -105,9 +102,7 @@ export const CustomSelect = ({ list }: Props) => {
       if (speedRef.current) {
         window.cancelAnimationFrame(reqIDRef.current)
         setAddedDegree((prev: number): number => {
-          // const result = (prev - 1) % maxDegree
           let result = (prev + speedRef.current) % maxDegree
-          // console.log({ addedDegree: result, speed: speedRef.current })
           return result
         })
         speedRef.current = Math.abs(speedRef.current) > 0.001 ? speedRef.current * 0.9 : 0
