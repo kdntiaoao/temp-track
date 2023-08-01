@@ -31,6 +31,7 @@ export const CustomSelect = ({ list, selectedVal, size = 'md', onChange }: Props
   const reqIDRef = useRef<number>(0) // cancelAnimationFrame() 用のID
   const speedRef = useRef<number>(0)
   const prevClientYRef = useRef<number | null>(null)
+  const containerElRef = useRef<HTMLDivElement>(null)
 
   const containerStyle = useMemo<string>(() => {
     if (size === 'sm') {
@@ -112,8 +113,10 @@ export const CustomSelect = ({ list, selectedVal, size = 'md', onChange }: Props
     window.document.body.style.height = '100vh'
   }, [])
 
-  const handleMouseMove = useCallback<(ev: React.MouseEvent<HTMLDivElement, MouseEvent>) => void>(
+  const handleMouseMove = useCallback<(ev: MouseEvent) => void>(
     (ev) => {
+      ev.preventDefault()
+
       if (!isActive) {
         return
       }
@@ -128,8 +131,10 @@ export const CustomSelect = ({ list, selectedVal, size = 'md', onChange }: Props
     [isActive]
   )
 
-  const handleTouchMove = useCallback<(ev: React.TouchEvent<HTMLDivElement>) => void>(
+  const handleTouchMove = useCallback<(ev: TouchEvent) => void>(
     (ev) => {
+      ev.preventDefault()
+
       if (!isActive) {
         return
       }
@@ -206,14 +211,18 @@ export const CustomSelect = ({ list, selectedVal, size = 'md', onChange }: Props
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [list, makedList])
 
+  useEffect(() => {
+    containerElRef.current?.addEventListener('mousemove', handleMouseMove, true)
+    containerElRef.current?.addEventListener('touchmove', handleTouchMove, true)
+
+    return () => {
+      containerElRef.current?.removeEventListener('mousemove', handleMouseMove, true)
+      containerElRef.current?.removeEventListener('touchmove', handleTouchMove, true)
+    }
+  }, [handleMouseMove, handleTouchMove])
+
   return (
-    <div
-      className={containerStyle}
-      onMouseDown={handleMouseDown}
-      onTouchStart={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onTouchMove={handleTouchMove}
-    >
+    <div className={containerStyle} ref={containerElRef} onMouseDown={handleMouseDown} onTouchStart={handleMouseDown}>
       {makedList.map((item, index) => (
         <div
           key={index}
