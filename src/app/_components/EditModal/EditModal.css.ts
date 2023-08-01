@@ -12,7 +12,7 @@ export const modalStyle = style({
   left: '50%',
   width: 'min(80%, 800px)',
   maxHeight: '80%',
-  padding: '2rem',
+  padding: '1rem',
   borderRadius: '2rem',
   transform: 'translate(-50%, -50%)',
   backgroundColor: '#eee',

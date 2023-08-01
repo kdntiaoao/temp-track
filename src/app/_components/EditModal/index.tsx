@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { modalStyle, wrapStyle } from './styles.css'
+import { useCallback, useEffect, useState } from 'react'
+import { modalStyle, wrapStyle } from './EditModal.css'
 import { CustomSelect } from '../CustomSelect'
 import dayjs from 'dayjs'
 import { Button } from '../Button'
@@ -23,27 +23,27 @@ export const EditModal = ({ edittedId, onClose }: Props) => {
   const [integerVal, setIntegerVal] = useState('36')
   const [decimalVal, setDecimalVal] = useState('0')
 
-  const handleChangeYear = (val: string) => {
+  const handleChangeYear = (val: string): void => {
     setYearVal(val)
   }
 
-  const handleChangeMonth = (val: string) => {
+  const handleChangeMonth = (val: string): void => {
     setMonthVal(val)
   }
 
-  const handleChangeDay = (val: string) => {
+  const handleChangeDay = (val: string): void => {
     setDayVal(val)
   }
 
-  const handleChangeInteger = (ev: React.ChangeEvent<HTMLSelectElement>) => {
-    setIntegerVal(ev.target.value)
+  const handleChangeInteger = (val: string): void => {
+    setIntegerVal(val)
   }
 
-  const handleChangeDecimal = (ev: React.ChangeEvent<HTMLSelectElement>) => {
-    setDecimalVal(ev.target.value)
+  const handleChangeDecimal = (val: string): void => {
+    setDecimalVal(val)
   }
 
-  const handleSave = () => {
+  const handleSave = useCallback<() => void>(() => {
     const time = dayjs()
       .year(Number(yearVal))
       .month(Number(monthVal) - 1)
@@ -56,7 +56,7 @@ export const EditModal = ({ edittedId, onClose }: Props) => {
     editBodyTemp(edittedId, time, integerVal + '.' + decimalVal)
 
     onClose()
-  }
+  }, [dayVal, decimalVal, editBodyTemp, edittedId, integerVal, monthVal, onClose, yearVal])
 
   useEffect(() => {
     const editted = bodyTempList?.find((b) => b.id === edittedId)
@@ -100,32 +100,23 @@ export const EditModal = ({ edittedId, onClose }: Props) => {
         onPointerDown={(ev) => ev.stopPropagation()}
         onMouseDown={(ev) => ev.stopPropagation()}
       >
+        <p className="mb-2">日付</p>
         <div className="flex gap-4">
           {yearVal && monthVal && dayVal && (
             <>
-              <CustomSelect list={yearList} selectedVal={yearVal} onChange={handleChangeYear} />
-              <CustomSelect list={monthList} selectedVal={monthVal} onChange={handleChangeMonth} />
-              <CustomSelect list={dayList} selectedVal={dayVal} onChange={handleChangeDay} />
+              <CustomSelect list={yearList} selectedVal={yearVal} size="sm" onChange={handleChangeYear} />
+              <CustomSelect list={monthList} selectedVal={monthVal} size="sm" onChange={handleChangeMonth} />
+              <CustomSelect list={dayList} selectedVal={dayVal} size="sm" onChange={handleChangeDay} />
             </>
           )}
         </div>
 
-        <div className="my-8 text-xl">
-          <select value={integerVal} onChange={handleChangeInteger}>
-            {integerList.map((integer) => (
-              <option key={integer} value={integer}>
-                {integer}
-              </option>
-            ))}
-          </select>{' '}
-          .{' '}
-          <select value={decimalVal} onChange={handleChangeDecimal}>
-            {decimalList.map((decimal) => (
-              <option key={decimal} value={decimal}>
-                {decimal}
-              </option>
-            ))}
-          </select>
+        <div className="my-8">
+          <p className="mb-2">体温</p>
+          <div className="flex items-center w-fit">
+            <CustomSelect list={integerList} selectedVal={integerVal} size="sm" onChange={handleChangeInteger} /> .{' '}
+            <CustomSelect list={decimalList} selectedVal={decimalVal} size="sm" onChange={handleChangeDecimal} />
+          </div>
         </div>
 
         <Button onClick={handleSave}>記録する</Button>

@@ -52,6 +52,7 @@ export const Table = () => {
             <tr className={thRowStyle}>
               <th className={thStyle}>日付</th>
               <th className={thStyle}>体温</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>

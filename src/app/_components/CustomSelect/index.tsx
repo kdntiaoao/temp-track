@@ -1,26 +1,54 @@
 'use client'
 
 import { assignInlineVars } from '@vanilla-extract/dynamic'
-import { containerStyle, itemStyle, rotateXVar } from './CustomSelect.css'
+import {
+  containerMdStyle,
+  containerSmStyle,
+  itemMdStyle,
+  itemSmStyle,
+  opacityVar,
+  rotateXVar,
+} from './CustomSelect.css'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 type Item = string
 
+export type Size = 'sm' | 'md' | 'lg'
+
 type Props = {
   list: Item[]
   selectedVal: string
+  size?: Size
   onChange: (val: string) => void
 }
 
 const lengthPerRotation = 12
 const distanceDegree = 360 / lengthPerRotation
 
-export const CustomSelect = ({ list, selectedVal, onChange }: Props) => {
+export const CustomSelect = ({ list, selectedVal, size = 'md', onChange }: Props) => {
   const [addedDegree, setAddedDegree] = useState<number>(0)
   const [isActive, setIsActive] = useState<boolean>(false)
   const reqIDRef = useRef<number>(0) // cancelAnimationFrame() 用のID
   const speedRef = useRef<number>(0)
   const prevClientYRef = useRef<number | null>(null)
+
+  const containerStyle = useMemo<string>(() => {
+    if (size === 'sm') {
+      return containerSmStyle
+    } else if (size === 'md') {
+      return containerMdStyle
+    }
+    return ''
+  }, [size])
+
+  const itemStyle = useMemo<string>(() => {
+    if (size === 'sm') {
+      return itemSmStyle
+    } else if (size === 'md') {
+      return itemMdStyle
+    }
+    return ''
+  }, [size])
 
   const makedList = useMemo<Item[]>(() => {
     if (list.length >= lengthPerRotation + 3) {
@@ -42,8 +70,8 @@ export const CustomSelect = ({ list, selectedVal, onChange }: Props) => {
 
   const maxDegree = useMemo<number>(() => makedList.length * distanceDegree, [makedList.length])
 
-  const getRotateX = useCallback<(index: number) => string>(
-    (index: number): string => {
+  const getRotateX = useCallback<(index: number) => number>(
+    (index: number): number => {
       const degree = index * distanceDegree
       let result = degree + addedDegree
 
@@ -60,9 +88,20 @@ export const CustomSelect = ({ list, selectedVal, onChange }: Props) => {
       }
 
       // 下向きを正にするため、 - をつける
-      return `${-result}deg`
+      return -result
     },
     [addedDegree, maxDegree]
+  )
+
+  const getOpacity = useCallback<(index: number) => number>(
+    (index) => {
+      const rotateX = getRotateX(index)
+      if (Math.abs(rotateX) > 90) {
+        return 0
+      }
+      return (1 - Math.abs(rotateX) / 90) ** 2
+    },
+    [getRotateX]
   )
 
   const handleMouseDown = useCallback<() => void>(() => {
@@ -178,8 +217,8 @@ export const CustomSelect = ({ list, selectedVal, onChange }: Props) => {
       {makedList.map((item, index) => (
         <div
           key={index}
-          className={`${itemStyle} ${index === 0 ? 'text-red-700' : ''}`}
-          style={assignInlineVars({ [rotateXVar]: getRotateX(index) })}
+          className={itemStyle}
+          style={assignInlineVars({ [opacityVar]: `${getOpacity(index)}`, [rotateXVar]: `${getRotateX(index)}deg` })}
         >
           {item}
         </div>
