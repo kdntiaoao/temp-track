@@ -24,11 +24,9 @@ export const tableWrapStyle = style({
 
 export const tableStyle = style({
   display: 'block',
-  padding: '0.5rem',
   overflow: 'auto',
   textAlign: 'center',
   whiteSpace: 'nowrap',
-  outline: '1px solid red',
 })
 
 export const thRowStyle = style({
