@@ -11,7 +11,7 @@ export const tableWrapStyle = style({
       display: 'block',
       width: '15%',
       content: '',
-      background: 'linear-gradient(90deg, rgb(255, 255, 255, 0.2), rgb(255, 255, 255, 0.9))',
+      background: 'linear-gradient(90deg, rgb(255, 255, 255, 0), rgb(255, 255, 255, 0.8))',
       opacity: 0,
       transition: 'opacity 0.3s',
       pointerEvents: 'none',
