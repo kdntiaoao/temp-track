@@ -29,8 +29,8 @@ export const BodyTempFields = ({ edittedId, onSave }: Props) => {
   const [dayVal, setDayVal] = useState<string>()
   const [integerVal, setIntegerVal] = useState<string>('36')
   const [decimalVal, setDecimalVal] = useState<string>('0')
-  const [dateFieldHeight, setDateFieldHeight] = useState<number>(0)
-  const [tempFieldHeight, setTempFieldHeight] = useState<number>(0)
+  const [dateFieldHeight, setDateFieldHeight] = useState<string>('auto')
+  const [tempFieldHeight, setTempFieldHeight] = useState<string>('auto')
   const dateFieldRef = useRef<HTMLDivElement>(null)
   const tempFieldRef = useRef<HTMLDivElement>(null)
 
@@ -128,11 +128,13 @@ export const BodyTempFields = ({ edittedId, onSave }: Props) => {
 
     setDayList(dayList)
 
-    console.log(dateFieldRef.current?.offsetHeight)
-    console.log(tempFieldRef.current?.offsetHeight)
-    setDateFieldHeight(dateFieldRef.current?.offsetHeight || 0)
-    setTempFieldHeight(tempFieldRef.current?.offsetHeight || 0)
+    setDateFieldHeight(`${dateFieldRef.current?.offsetHeight || 0}px`)
+    setTempFieldHeight(`${tempFieldRef.current?.offsetHeight || 0}px`)
   }, [monthVal, yearVal])
+
+  if (!yearVal || !monthVal || !dayVal) {
+    return <p>Loading...</p>
+  }
 
   return (
     <div
@@ -150,13 +152,11 @@ export const BodyTempFields = ({ edittedId, onSave }: Props) => {
         style={assignInlineVars({ [heightVar]: dateActive ? `${dateFieldHeight}px` : '0' })}
       >
         <div className={fieldStyle} ref={dateFieldRef}>
-          {yearVal && monthVal && dayVal && (
-            <>
-              <CustomSelect list={yearList} selectedVal={yearVal} size="sm" onChange={handleChangeYear} />
-              <CustomSelect list={monthList} selectedVal={monthVal} size="sm" onChange={handleChangeMonth} />
-              <CustomSelect list={dayList} selectedVal={dayVal} size="sm" onChange={handleChangeDay} />
-            </>
-          )}
+          <>
+            <CustomSelect list={yearList} selectedVal={yearVal} size="md" onChange={handleChangeYear} />
+            <CustomSelect list={monthList} selectedVal={monthVal} size="md" onChange={handleChangeMonth} />
+            <CustomSelect list={dayList} selectedVal={dayVal} size="md" onChange={handleChangeDay} />
+          </>
         </div>
       </div>
 
@@ -171,8 +171,8 @@ export const BodyTempFields = ({ edittedId, onSave }: Props) => {
           style={assignInlineVars({ [heightVar]: tempActive ? `${tempFieldHeight}px` : '0' })}
         >
           <div className={fieldStyle} ref={tempFieldRef}>
-            <CustomSelect list={integerList} selectedVal={integerVal} size="sm" onChange={handleChangeInteger} /> .{' '}
-            <CustomSelect list={decimalList} selectedVal={decimalVal} size="sm" onChange={handleChangeDecimal} />
+            <CustomSelect list={integerList} selectedVal={integerVal} size="md" onChange={handleChangeInteger} /> .{' '}
+            <CustomSelect list={decimalList} selectedVal={decimalVal} size="md" onChange={handleChangeDecimal} />
           </div>
         </div>
       </div>
