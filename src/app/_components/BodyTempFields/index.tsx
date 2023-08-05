@@ -147,10 +147,7 @@ export const BodyTempFields = ({ edittedId, onSave }: Props) => {
           日付：{yearVal}年{monthVal}月{dayVal}日
         </button>
       </p>
-      <div
-        className={fieldWrapStyle}
-        style={assignInlineVars({ [heightVar]: dateActive ? `${dateFieldHeight}px` : '0' })}
-      >
+      <div className={fieldWrapStyle} style={assignInlineVars({ [heightVar]: dateActive ? dateFieldHeight : '0' })}>
         <div className={fieldStyle} ref={dateFieldRef}>
           <>
             <CustomSelect list={yearList} selectedVal={yearVal} size="md" onChange={handleChangeYear} />
@@ -166,10 +163,7 @@ export const BodyTempFields = ({ edittedId, onSave }: Props) => {
             体温：{integerVal}.{decimalVal}
           </button>
         </p>
-        <div
-          className={fieldWrapStyle}
-          style={assignInlineVars({ [heightVar]: tempActive ? `${tempFieldHeight}px` : '0' })}
-        >
+        <div className={fieldWrapStyle} style={assignInlineVars({ [heightVar]: tempActive ? tempFieldHeight : '0' })}>
           <div className={fieldStyle} ref={tempFieldRef}>
             <CustomSelect list={integerList} selectedVal={integerVal} size="md" onChange={handleChangeInteger} /> .{' '}
             <CustomSelect list={decimalList} selectedVal={decimalVal} size="md" onChange={handleChangeDecimal} />

@@ -9,7 +9,7 @@ export const wrapStyle = style({
 })
 
 export const modalStyle = style({
-  width: 'min(80%, 800px)',
+  width: 'min(80%, 600px)',
   maxHeight: '80%',
   padding: '1rem',
   borderRadius: '2rem',
