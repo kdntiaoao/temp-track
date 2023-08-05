@@ -1,10 +1,11 @@
 'use client'
 
-import { LinkText } from './_components/LinkText'
 import { Heading } from './_components/Heading'
 import { Container } from './_components/Container'
 import { Table } from './_components/Table'
 import { useBodyTemp } from '@/hooks/useBodyTemp'
+import { Button } from './_components/Button'
+import Link from 'next/link'
 
 export default function Home() {
   const { isLoading } = useBodyTemp()
@@ -16,11 +17,11 @@ export default function Home() {
 
         {isLoading ? <p>Loading...</p> : <Table />}
 
-        <ul className="my-4">
-          <li>
-            <LinkText href="/register">体温を記録する</LinkText>
-          </li>
-        </ul>
+        <div className="my-4">
+          <Button component={Link} href="/register">
+            体温を記録する
+          </Button>
+        </div>
       </Container>
     </>
   )

@@ -8,7 +8,8 @@ export const tableWrapStyle = style({
       top: 0,
       bottom: 0,
       right: 0,
-      display: 'block',
+      display: 'grid',
+      justifyContent: 'center',
       width: '15%',
       content: '',
       background: 'linear-gradient(90deg, rgb(255, 255, 255, 0), rgb(255, 255, 255, 0.8))',
@@ -24,6 +25,9 @@ export const tableWrapStyle = style({
 
 export const tableStyle = style({
   display: 'block',
+  maxWidth: '100%',
+  width: 'fit-content',
+  margin: '0 auto',
   overflow: 'auto',
   textAlign: 'center',
   whiteSpace: 'nowrap',
