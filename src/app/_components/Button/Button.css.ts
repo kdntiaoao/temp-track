@@ -5,6 +5,7 @@ export const bgcolorVar = createVar()
 export const buttonStyle = style({
   display: 'grid',
   placeContent: 'center',
+  width: '100%',
   padding: '0.3em 1em',
   borderRadius: '0.5em',
   backgroundColor: bgcolorVar,
