@@ -3,6 +3,7 @@ import { Noto_Sans_JP } from 'next/font/google'
 import './globals.css'
 import './theme.css'
 import { CustomProvider } from './_components/provider/CustomProvider'
+import { DefaultLayout } from './_components/DefaultLayout'
 
 const notoSansJP = Noto_Sans_JP({ weight: ['400'], subsets: ['latin'] })
 
@@ -17,7 +18,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ja">
       <body className={notoSansJP.className}>
-        <CustomProvider>{children}</CustomProvider>
+        <CustomProvider>
+          <DefaultLayout>{children}</DefaultLayout>
+        </CustomProvider>
       </body>
     </html>
   )

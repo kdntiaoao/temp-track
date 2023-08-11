@@ -21,16 +21,8 @@ export default function Page() {
   )
 
   return (
-    <Container>
-      <Heading>体温を記録する</Heading>
-
-      <div className="my-4">
-        <LinkText href="/">HOME</LinkText>
-      </div>
-
-      <div className="my-4">
-        <BodyTempFields onSave={handleSave} />
-      </div>
-    </Container>
+    <div className="my-4">
+      <BodyTempFields onSave={handleSave} />
+    </div>
   )
 }

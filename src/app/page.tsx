@@ -22,20 +22,13 @@ export default function Home() {
 
   return (
     <>
-      <Container>
-        <Heading>
-          <Image src={logoImage} alt="" width={32} height={32} />
-          TempTrack
-        </Heading>
+      {isLoading ? <p>Loading...</p> : <Table />}
 
-        {isLoading ? <p>Loading...</p> : <Table />}
-
-        <div className="my-4">
-          <Button component={Link} href="/register">
-            体温を記録する
-          </Button>
-        </div>
-      </Container>
+      <div className="my-4">
+        <Button component={Link} href="/register">
+          体温を記録する
+        </Button>
+      </div>
     </>
   )
 }
