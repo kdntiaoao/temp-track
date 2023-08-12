@@ -21,7 +21,7 @@ export default function Home() {
     <>
       {isLoading ? <p>Loading...</p> : <Table />}
 
-      <div className="my-4">
+      <div className="my-8">
         <Button component={Link} href="/register">
           体温を記録する
         </Button>
