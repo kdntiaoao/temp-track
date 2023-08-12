@@ -1,11 +1,8 @@
 'use client'
 
 import { useEffect } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from './_components/Button'
-import { Container } from './_components/Container'
-import { Heading } from './_components/Heading'
 import { Table } from './_components/Table'
 import { useBodyTemp } from '@/hooks/useBodyTemp'
 
