@@ -14,6 +14,9 @@ export default function Home() {
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/serviceworker.js')
+
+      let unreadCount = 125
+      navigator.setAppBadge(unreadCount)
     }
   }, [])
 
