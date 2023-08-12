@@ -28,11 +28,5 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "related_applications": [
-    {
-      "platform": "webapp",
-      "url": "https://vanilla-extract-sample.vercel.app/manifest.webmanifest"
-    }
   ]
 }
