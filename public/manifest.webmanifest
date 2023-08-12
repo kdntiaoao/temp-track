@@ -32,7 +32,7 @@
   "related_applications": [
     {
       "platform": "webapp",
-      "url": "/manifest.webmanifest"
+      "url": "https://vanilla-extract-sample.vercel.app/manifest.webmanifest"
     }
   ]
 }
