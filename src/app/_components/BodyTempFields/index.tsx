@@ -5,6 +5,7 @@ import { Button } from '../Button'
 import { useBodyTemp } from '@/hooks/useBodyTemp'
 import { bodyTempFieldsStyle, fieldStyle, fieldWrapStyle, heightVar } from './BodyTempFields.css'
 import { assignInlineVars } from '@vanilla-extract/dynamic'
+import { ArrowIcon } from '../ArrowIcon'
 
 type Props = {
   edittedId?: string
@@ -143,8 +144,8 @@ export const BodyTempFields = ({ edittedId, onSave }: Props) => {
       onMouseDown={(ev) => ev.stopPropagation()}
     >
       <p className="mb-2">
-        <button type="button" onClick={toggleDateActive}>
-          日付：{yearVal}年{monthVal}月{dayVal}日
+        <button type="button" className="flex items-center gap-1" onClick={toggleDateActive}>
+          日付：{yearVal}年{monthVal}月{dayVal}日 <ArrowIcon orientation={dateActive ? 'downward' : 'rightward'} />
         </button>
       </p>
       <div className={fieldWrapStyle} style={assignInlineVars({ [heightVar]: dateActive ? dateFieldHeight : '0' })}>
@@ -159,8 +160,8 @@ export const BodyTempFields = ({ edittedId, onSave }: Props) => {
 
       <div className="my-8">
         <p className="mb-2">
-          <button type="button" onClick={toggleBodyTempActive}>
-            体温：{integerVal}.{decimalVal}
+          <button type="button" className="flex items-center gap-1" onClick={toggleBodyTempActive}>
+            体温：{integerVal}.{decimalVal} <ArrowIcon orientation={tempActive ? 'downward' : 'rightward'} />
           </button>
         </p>
         <div className={fieldWrapStyle} style={assignInlineVars({ [heightVar]: tempActive ? tempFieldHeight : '0' })}>
