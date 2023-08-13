@@ -163,7 +163,7 @@ export const CustomSelect = ({ list, selectedVal, size = 'md', onChange }: Props
             }
           }
 
-          if (!isActive && Math.abs(speedRef.current) < 1.5 && Math.abs(prev % distanceDegree) < 0.5) {
+          if (Math.abs(speedRef.current) < 1.5 && Math.abs(prev % distanceDegree) < 1) {
             return prev - (prev % distanceDegree)
           }
           const result = (prev + speedRef.current) % maxDegree
