@@ -12,13 +12,12 @@ const barBaseStyle: ComplexStyleRule = {
   position: 'absolute',
   top: '50%',
   left: '50%',
-  transform: 'translate(-50%, -50%) rotate(45deg)',
   transformOrigin: 'calc(1em - 1.5px) center',
   width: '1em',
   height: '3px',
   content: '',
   backgroundColor: 'currentcolor',
-  // borderRadius: '999px',
+  borderRadius: '999px',
 }
 
 export const arrowIconStyle = style({
@@ -26,11 +25,11 @@ export const arrowIconStyle = style({
   selectors: {
     '&::before': {
       ...barBaseStyle,
-      transform: 'translate(-50%, -50%) rotate(45deg)',
+      transform: 'translate(-50%, 0%) rotate(45deg)',
     },
     '&::after': {
       ...barBaseStyle,
-      transform: 'translate(-50%, -50%) rotate(-45deg)',
+      transform: 'translate(-50%, 0%) rotate(-45deg)',
     },
   },
 })
