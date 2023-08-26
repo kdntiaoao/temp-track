@@ -214,11 +214,6 @@ export const CustomSelect = ({ list, selectedVal, size = 'md', onChange }: Props
   useEffect(() => {
     containerElRef.current?.addEventListener('mousemove', handleMouseMove, true)
     containerElRef.current?.addEventListener('touchmove', handleTouchMove, true)
-
-    return () => {
-      containerElRef.current?.removeEventListener('mousemove', handleMouseMove, true)
-      containerElRef.current?.removeEventListener('touchmove', handleTouchMove, true)
-    }
   }, [handleMouseMove, handleTouchMove])
 
   return (

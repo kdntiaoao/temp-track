@@ -9,7 +9,12 @@ const nextConfig = {
   // },
 }
 
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  buildExcludes: ['app-build-manifest.json'],
+})
+
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
 
-module.exports = withVanillaExtract(nextConfig)
+module.exports = withPWA(withVanillaExtract(nextConfig))
