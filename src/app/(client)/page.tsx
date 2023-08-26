@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Button } from './_components/Button'
-import { Table } from './_components/Table'
+import { Button } from '../_components/Button'
+import { Table } from '../_components/Table'
 import { useBodyTemp } from '@/hooks/useBodyTemp'
 
 export default function Home() {
@@ -26,10 +26,6 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-    }
-
     if ('setAppBadge' in navigator) {
       let unreadCount = 125
       navigator.setAppBadge(unreadCount)
@@ -41,15 +37,6 @@ export default function Home() {
       console.log(e)
       setNotInstalled(true)
     })
-
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
-    if (isStandalone) {
-      console.log('standalone')
-    } else {
-      console.log('not standalone')
-    }
-
-    console.log(navigator)
   }, [])
 
   return (

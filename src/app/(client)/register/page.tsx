@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useBodyTemp } from '@/hooks/useBodyTemp'
 import { useCallback } from 'react'
-import { BodyTempFields } from '../_components/BodyTempFields'
+import { BodyTempFields } from '../../_components/BodyTempFields'
 
 export default function Page() {
   const router = useRouter()
