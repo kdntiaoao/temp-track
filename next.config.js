@@ -12,6 +12,12 @@ const nextConfig = {
 const withPWA = require('next-pwa')({
   dest: 'public',
   buildExcludes: ['app-build-manifest.json'],
+  // デフォルトのキャッシュ戦略: https://github.com/shadowwalker/next-pwa/blob/master/cache.js
+  runtimeCaching: [{ handler: 'NetworkOnly', urlPattern: /.*/ }],
+  // disable: process.env.NODE_ENV === 'development',
+  // register: true,
+  // scope: '/app',
+  // sw: 'servicef-worker.js',
 })
 
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')

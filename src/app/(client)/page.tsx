@@ -29,6 +29,7 @@ export default function Home() {
     if ('setAppBadge' in navigator) {
       let unreadCount = 125
       navigator.setAppBadge(unreadCount)
+      console.log('setAppBadge', unreadCount)
     }
 
     window.addEventListener('beforeinstallprompt', (e) => {
