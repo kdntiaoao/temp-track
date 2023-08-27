@@ -32,8 +32,14 @@ export default function Home() {
       console.log('setAppBadge', unreadCount)
     }
 
-    const title = 'hello world'
-    new Notification(title)
+    try {
+      const title = 'hello world'
+      new Notification(title)
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Notification Error', error.message)
+      }
+    }
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault()
