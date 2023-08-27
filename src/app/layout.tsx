@@ -18,8 +18,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
-      <Script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></Script>
-      <Script id="one-signal">
+      <Script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer strategy="beforeInteractive" />
+      <Script id="one-signal" strategy="beforeInteractive">
         {`
           window.OneSignalDeferred = window.OneSignalDeferred || [];
           OneSignalDeferred.push(function(OneSignal) {
