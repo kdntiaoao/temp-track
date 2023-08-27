@@ -24,17 +24,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <Script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer strategy="beforeInteractive" />
       <Script id="one-signal" strategy="beforeInteractive">
         {`
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(function(OneSignal) {
-        OneSignal.init({
-          appId: "00e9639b-fa8a-4e79-8087-e071b16f9183",
-          safari_web_id: "web.onesignal.auto.028d9952-ba2c-477b-babc-6aee5c5ba0de",
-          notifyButton: {
-            enable: true,
-          },
-        });
-      });
-    `}
+          window.OneSignalDeferred = window.OneSignalDeferred || [];
+          OneSignalDeferred.push(function(OneSignal) {
+            OneSignal.init({
+              appId: "00e9639b-fa8a-4e79-8087-e071b16f9183",
+              safari_web_id: "web.onesignal.auto.028d9952-ba2c-477b-babc-6aee5c5ba0de",
+              notifyButton: {
+                enable: true,
+              },
+            });
+          });
+          console.log('OneSignalDeferred', window.OneSignalDeferred);
+        `}
       </Script>
 
       {children}
