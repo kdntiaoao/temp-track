@@ -32,6 +32,9 @@ export default function Home() {
       console.log('setAppBadge', unreadCount)
     }
 
+    const title = 'hello world'
+    new Notification(title)
+
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault()
       setDeferredPrompt(e)
