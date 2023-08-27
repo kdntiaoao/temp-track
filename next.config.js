@@ -4,9 +4,9 @@ const nextConfig = {
   // basePath: '/vanilla-extract-sample',
   // distDir: 'out/vanilla-extract-sample',
   trailingSlash: true,
-  // images: {
-  //   unoptimized: true,
-  // },
+  images: {
+    unoptimized: true,
+  },
 }
 
 const withPWA = require('next-pwa')({
@@ -14,7 +14,6 @@ const withPWA = require('next-pwa')({
   buildExcludes: ['app-build-manifest.json'],
   // デフォルトのキャッシュ戦略: https://github.com/shadowwalker/next-pwa/blob/master/cache.js
   // runtimeCaching: [{ handler: 'NetworkOnly', urlPattern: /.*/ }],
-  runtimeCaching: [{ handler: 'NetworkFirst', urlPattern: 'index.html' }],
   disable: process.env.NODE_ENV === 'development',
   // register: true,
   // scope: '/app',
