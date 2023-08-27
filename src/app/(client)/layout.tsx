@@ -19,12 +19,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
     // Initializing the OneSignal SDK
     // https://onesignal.com/blog/how-to-integrate-onesignal-into-a-next-app/
-    window.OneSignal = window.OneSignal || []
+    window.OneSignalDeferred = window.OneSignalDeferred || []
     const appId = 'b40b7cc7-13dc-4662-8b48-efa668f9b72a' // production
     // const appId = 'edc80000-6aca-4a61-a7eb-227d8026f625' // dev
     const safari_web_id = 'web.onesignal.auto.028d9952-ba2c-477b-babc-6aee5c5ba0de' // production
     // const safari_web_id = 'web.onesignal.auto.44fa898b-ecac-43e4-a4f9-b7817452e5d5' // dev
-    window.OneSignal.push(function (OneSignal: any) {
+    window.OneSignalDeferred.push(function (OneSignal: any) {
       OneSignal.init({
         appId,
         safari_web_id,
@@ -35,16 +35,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         allowLocalhostAsSecureOrigin: true,
       })
     })
-    console.log('OneSignal', window.OneSignal)
+    console.log('OneSignal', window.OneSignalDeferred)
 
     return () => {
-      window.OneSignal = undefined
+      window.OneSignalDeferred = undefined
     }
   }, [])
 
   return (
     <>
-      <Script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer strategy="beforeInteractive" />
+      <Script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer />
 
       {children}
     </>
