@@ -46,6 +46,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     }
   }, [])
 
+  useEffect(() => {
+    if (displayedMessage) {
+      setTimeout(() => {
+        setDisplayedMessage(false)
+      }, 10000)
+    }
+  }, [displayedMessage])
+
   return (
     <>
       {children}
