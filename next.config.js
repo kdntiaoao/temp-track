@@ -15,7 +15,7 @@ const withPWA = require('next-pwa')({
   // デフォルトのキャッシュ戦略: https://github.com/shadowwalker/next-pwa/blob/master/cache.js
   // runtimeCaching: [{ handler: 'NetworkOnly', urlPattern: /.*/ }],
   disable: process.env.NODE_ENV === 'development',
-  // register: true,
+  register: true,
   // scope: '/app',
   // sw: 'servicef-worker.js',
 })

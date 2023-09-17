@@ -26,21 +26,6 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if ('setAppBadge' in navigator) {
-      let unreadCount = 125
-      navigator.setAppBadge(unreadCount)
-      console.log('setAppBadge', unreadCount)
-    }
-
-    try {
-      const title = 'hello world'
-      new Notification(title)
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error('Notification Error', error.message)
-      }
-    }
-
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault()
       setDeferredPrompt(e)
