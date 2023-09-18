@@ -17,6 +17,7 @@ export const useNotificationPermission = () => {
       })
     } catch (error) {
       console.log(error)
+      setNotificationPermission('denied')
     }
   }
 
@@ -25,6 +26,7 @@ export const useNotificationPermission = () => {
       setNotificationPermission(Notification.permission)
     } catch (error) {
       console.log(error)
+      setNotificationPermission('denied')
     }
   }, [setNotificationPermission])
 
