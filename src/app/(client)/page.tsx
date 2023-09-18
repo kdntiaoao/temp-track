@@ -4,12 +4,12 @@ import Link from 'next/link'
 import { Button } from '../_components/Button'
 import { Table } from '../_components/Table'
 import { useBodyTemp } from '@/hooks/useBodyTemp'
-import { useInstallPwa } from '@/hooks/useInstallPwa'
+import { useInstalledPwa } from '@/hooks/useInstalledPwa'
 import { useNotificationPermission } from '@/hooks/useNotificationPermission'
 
 export default function Home() {
   const { isLoading } = useBodyTemp()
-  const { installedPwa, onInstallPwa } = useInstallPwa()
+  const { installedPwa, onInstallPwa } = useInstalledPwa()
   const { notificationPermission, requestNotificationPermission } = useNotificationPermission()
 
   return (

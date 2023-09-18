@@ -2,12 +2,13 @@ import { installPwaState } from '@/states/installPwa'
 import { useCallback, useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 
-export const useInstallPwa = () => {
+export const useInstalledPwa = () => {
   const [installedPwa, setInstalledPwa] = useRecoilState(installPwaState)
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
 
   const enableInAppInstallPrompt = useCallback(
     (ev: Event) => {
+      console.log('not installed!')
       ev.preventDefault()
       setDeferredPrompt(ev)
       console.log(ev)
