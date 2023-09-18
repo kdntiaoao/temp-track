@@ -19,7 +19,11 @@ const app = initializeApp(firebaseConfig)
 // Initialize Firebase Cloud Messaging and get a reference to the service
 let messaging: Messaging
 if (typeof window !== 'undefined' && window.navigator) {
-  messaging = getMessaging(app)
+  try {
+    messaging = getMessaging(app)
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 let count = 0
