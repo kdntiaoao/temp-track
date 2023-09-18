@@ -3,6 +3,7 @@
 import { startTransition, useEffect, useState } from 'react'
 import { getFcmToken, onMessageByFCM } from '@/utils/firebase/firebase'
 import { Message } from '../_components/Message'
+import { useNotificationPermission } from '@/hooks/useNotificationPermission'
 
 type Message = {
   title?: string
@@ -13,6 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const [currentToken, setCurrentToken] = useState('')
   const [message, setMessage] = useState<Message | null>(null)
   const [displayedMessage, setDisplayedMessage] = useState(false)
+  const { notificationPermission } = useNotificationPermission()
 
   const hideMessage = () => {
     setDisplayedMessage(false)
@@ -26,30 +28,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       console.log('not standalone')
     }
 
-    getFcmToken().then((token) => {
-      setCurrentToken(token || '')
-    })
+    if (notificationPermission === 'granted') {
+      getFcmToken().then((token) => {
+        setCurrentToken(token || '')
+      })
 
-    onMessageByFCM((notification) => {
-      if (!notification?.body) {
-        setMessage(null)
-      } else {
-        setMessage({
-          title: notification.title,
-          body: notification.body,
-        })
-        startTransition(() => {
-          setDisplayedMessage(true)
-        })
-      }
-    })
+      onMessageByFCM((notification) => {
+        if (!notification?.body) {
+          setMessage(null)
+        } else {
+          setMessage({
+            title: notification.title,
+            body: notification.body,
+          })
+          startTransition(() => {
+            setDisplayedMessage(true)
+          })
+        }
+      })
+    }
 
     window.addEventListener('click', hideMessage)
 
     return () => {
       window.removeEventListener('click', hideMessage)
     }
-  }, [])
+  }, [notificationPermission])
 
   useEffect(() => {
     if (displayedMessage) {

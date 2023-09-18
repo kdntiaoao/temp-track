@@ -45,7 +45,7 @@ export const getFcmToken = async (): Promise<string | null> => {
       window.setTimeout(() => {
         console.log('Reentry:', count)
         resolve(getFcmToken())
-      }, 500)
+      }, 1000)
     })
   }
 }

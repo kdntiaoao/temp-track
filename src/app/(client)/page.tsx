@@ -1,38 +1,16 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Button } from '../_components/Button'
 import { Table } from '../_components/Table'
 import { useBodyTemp } from '@/hooks/useBodyTemp'
+import { useInstallPwa } from '@/hooks/useInstallPwa'
+import { useNotificationPermission } from '@/hooks/useNotificationPermission'
 
 export default function Home() {
   const { isLoading } = useBodyTemp()
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
-  const [notInstalled, setNotInstalled] = useState<boolean>(false)
-
-  const handleClickInstallButton = async () => {
-    deferredPrompt.prompt()
-
-    const { outcome } = await deferredPrompt.userChoice
-
-    setDeferredPrompt(null)
-
-    if (outcome === 'accepted') {
-      console.log('User accepted the install prompt.')
-    } else if (outcome === 'dismissed') {
-      console.log('User dismissed the install prompt')
-    }
-  }
-
-  useEffect(() => {
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault()
-      setDeferredPrompt(e)
-      console.log(e)
-      setNotInstalled(true)
-    })
-  }, [])
+  const { installed, onInstallPwa } = useInstallPwa()
+  const { notificationPermission, requestNotificationPermission } = useNotificationPermission()
 
   return (
     <>
@@ -44,9 +22,15 @@ export default function Home() {
         </Button>
       </div>
 
-      {notInstalled && (
+      {notificationPermission === 'default' && (
         <div className="my-8">
-          <Button onClick={handleClickInstallButton}>インストール</Button>
+          <Button onClick={requestNotificationPermission}>PUSH通知を登録する</Button>
+        </div>
+      )}
+
+      {!installed && (
+        <div className="my-8">
+          <Button onClick={onInstallPwa}>インストール</Button>
         </div>
       )}
     </>
