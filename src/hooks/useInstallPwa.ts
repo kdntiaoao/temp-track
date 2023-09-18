@@ -1,33 +1,42 @@
 import { installPwaState } from '@/states/installPwa'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 
 export const useInstallPwa = () => {
   const [installedPwa, setInstalledPwa] = useRecoilState(installPwaState)
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
 
-  const onInstallPwa = async () => {
-    deferredPrompt.prompt()
+  const enableInAppInstallPrompt = useCallback(
+    (ev: Event) => {
+      ev.preventDefault()
+      setDeferredPrompt(ev)
+      console.log(ev)
+      setInstalledPwa(false)
+    },
+    [setInstalledPwa]
+  )
 
-    const { outcome } = await deferredPrompt.userChoice
-
+  const disableInAppInstallPrompt = useCallback(() => {
+    console.log('installed!')
     setDeferredPrompt(null)
+    setInstalledPwa(true)
+  }, [setInstalledPwa])
 
-    if (outcome === 'accepted') {
-      console.log('User accepted the install prompt.')
-    } else if (outcome === 'dismissed') {
-      console.log('User dismissed the install prompt')
-    }
+  const onInstallPwa = async () => {
+    const result = await deferredPrompt.prompt()
+    console.log(`Install prompt was: ${result.outcome}`)
+    disableInAppInstallPrompt()
   }
 
   useEffect(() => {
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault()
-      setDeferredPrompt(e)
-      console.log(e)
-      setInstalledPwa(false)
-    })
-  }, [setInstalledPwa])
+    window.addEventListener('beforeinstallprompt', enableInAppInstallPrompt)
+    window.addEventListener('appinstalled', disableInAppInstallPrompt)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', enableInAppInstallPrompt)
+      window.removeEventListener('appinstalled', disableInAppInstallPrompt)
+    }
+  }, [disableInAppInstallPrompt, enableInAppInstallPrompt, setInstalledPwa])
 
   return { installedPwa, onInstallPwa }
 }
