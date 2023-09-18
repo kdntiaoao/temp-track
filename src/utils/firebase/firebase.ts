@@ -55,9 +55,12 @@ export const getFcmToken = async (): Promise<string | null> => {
 }
 
 export const onMessageByFCM = (callback?: (notification: NotificationPayload | null) => void) => {
-  console.log('onMessage')
-  onMessage(messaging, (payload) => {
-    console.log('Message received. ', payload)
-    callback?.(payload.notification ?? null)
-  })
+  try {
+    onMessage(messaging, (payload) => {
+      console.log('Message received. ', payload)
+      callback?.(payload.notification ?? null)
+    })
+  } catch (error) {
+    console.log(error)
+  }
 }
