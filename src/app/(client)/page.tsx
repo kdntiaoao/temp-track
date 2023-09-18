@@ -9,30 +9,32 @@ import { useNotificationPermission } from '@/hooks/useNotificationPermission'
 
 export default function Home() {
   const { isLoading } = useBodyTemp()
-  const { installed, onInstallPwa } = useInstallPwa()
+  const { installedPwa, onInstallPwa } = useInstallPwa()
   const { notificationPermission, requestNotificationPermission } = useNotificationPermission()
 
   return (
     <>
       {isLoading ? <p>Loading...</p> : <Table />}
 
-      <div className="my-8">
-        <Button component={Link} href="/register">
-          体温を記録する
-        </Button>
+      <div className="sticky bottom-4 grid gap-4 mt-8">
+        <div>
+          <Button component={Link} href="/register">
+            体温を記録する
+          </Button>
+        </div>
+
+        {notificationPermission === 'default' && (
+          <div>
+            <Button onClick={requestNotificationPermission}>PUSH通知を登録する</Button>
+          </div>
+        )}
+
+        {!installedPwa && (
+          <div>
+            <Button onClick={onInstallPwa}>インストール</Button>
+          </div>
+        )}
       </div>
-
-      {notificationPermission === 'default' && (
-        <div className="my-8">
-          <Button onClick={requestNotificationPermission}>PUSH通知を登録する</Button>
-        </div>
-      )}
-
-      {!installed && (
-        <div className="my-8">
-          <Button onClick={onInstallPwa}>インストール</Button>
-        </div>
-      )}
     </>
   )
 }

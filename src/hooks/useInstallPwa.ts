@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 
 export const useInstallPwa = () => {
-  const [installed, setInstalled] = useRecoilState(installPwaState)
+  const [installedPwa, setInstalledPwa] = useRecoilState(installPwaState)
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
 
   const onInstallPwa = async () => {
@@ -25,9 +25,9 @@ export const useInstallPwa = () => {
       e.preventDefault()
       setDeferredPrompt(e)
       console.log(e)
-      setInstalled(false)
+      setInstalledPwa(false)
     })
-  }, [setInstalled])
+  }, [setInstalledPwa])
 
-  return { installed, onInstallPwa }
+  return { installedPwa, onInstallPwa }
 }
