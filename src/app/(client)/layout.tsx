@@ -10,6 +10,7 @@ type Message = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const [currentToken, setCurrentToken] = useState('')
   const [message, setMessage] = useState<Message | null>(null)
   const [displayedMessage, setDisplayedMessage] = useState(false)
 
@@ -25,7 +26,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       console.log('not standalone')
     }
 
-    getFcmToken()
+    getFcmToken().then((token) => {
+      setCurrentToken(token || '')
+    })
 
     onMessageByFCM((notification) => {
       if (!notification?.body) {
@@ -35,7 +38,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           title: notification.title,
           body: notification.body,
         })
-        setDisplayedMessage(true)
+        startTransition(() => {
+          setDisplayedMessage(true)
+        })
       }
     })
 
@@ -57,6 +62,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <>
       {children}
+
+      <p className="mt-8">{currentToken}</p>
 
       <Message displayed={displayedMessage && !!message}>
         <p className="overflow-hidden text-ellipsis">{message?.body}</p>
