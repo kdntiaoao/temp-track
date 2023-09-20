@@ -27,12 +27,4 @@ console.log({ firebase, messaging })
 
 messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message ', payload)
-
-  const notification = payload.data
-  const notificationOptions = {
-    body: notification.body,
-    icon: 'https://temp-track.vercel.app/icon-192x192.png',
-  }
-
-  self.registration.showNotification(notification.title, notificationOptions)
 })
