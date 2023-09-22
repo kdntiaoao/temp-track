@@ -67,7 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <>
       {children}
 
-      {currentToken && <p className="mt-8 break-all">{currentToken}</p>}
+      {/* {currentToken && <p className="mt-8 break-all">{currentToken}</p>} */}
 
       <Message displayed={displayedMessage && !!message}>
         <p className="overflow-hidden text-ellipsis">{message?.body}</p>
